@@ -1,0 +1,9 @@
+ [% PROCESS crud/yui_footer.tt %]
+ <div id="crud_footer">
+ Powered by CatalystX::CRUD::YUI
+ </div>
+ 
+ </body>
+</html>
+
+

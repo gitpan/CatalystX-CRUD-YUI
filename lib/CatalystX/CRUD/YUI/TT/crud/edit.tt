@@ -1,0 +1,58 @@
+[%# generic edit screen for forms %]
+
+ [% oid = c.controller.make_primary_key_string(object) || 0 %]
+ [% PROCESS crud/iframe_panel.tt %] 
+ 
+ <div id="main">
+
+ [% IF c.flash.message %]<div class="message">[% c.flash.message %]</div>[% END %]
+ 
+ <form method="post" 
+       action="[% c.uri_for(oid, 'save') %]"
+       class="crud"
+       >
+  <fieldset>
+   [% IF !buttons.defined || buttons != 0 || !c.controller.can_write(c) %]
+   <legend>[% object_id ? 'Edit' : 'Create' %] [% c.action.class.replace('.+::') %] [% object_id || '' %]</legend>
+   [% ELSE %]
+   <legend>
+    <a href="[% c.uri_for('/' _ c.action.namespace, oid, 'edit' ) %]"
+      >Edit [% c.action.class.replace('.+::') %] [% object_id %]</a>
+   </legend>
+   [% END %]
+    
+    [% PROCESS crud/form.tt %]
+    
+    [% 
+        UNLESS buttons == 0;
+            PROCESS crud/crud_buttons.tt;
+        END;
+    %]
+    
+  </fieldset>
+ </form>
+ 
+  [% IF form_links.size %]
+   <div class="links">
+    <ul>
+    [% FOR item = form_links %]
+     [% IF item.iframe %]
+     <li><a href="#" onclick="open_in_panel('[% item.href %]'); return false">[% item.text %]</a></li>
+     [% ELSE %]
+     <li><a href="[% item.href %]">[% item.text %]</a></li>
+     [% END %]
+    [% END %]
+    </ul>
+   </div>
+  [% END %]
+   
+  [%
+    # if configured, also show links to relationships.
+    IF (form.metadata.show_relationships && oid);
+      '<div id="relationships">'; 
+        PROCESS crud/show_relationships.tt;
+      '</div>';
+    END;  # show_relationships
+  %]
+ 
+ </div>

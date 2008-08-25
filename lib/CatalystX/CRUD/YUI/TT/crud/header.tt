@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+ <head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+  <title>[% c.config.name || 'CatalystX::CRUD::YUI Application' %]</title>
+
+  <link rel="shortcut icon" href="[% static_url %]/favicon.ico" type="image/x-icon" />
+              
+
+  [% PROCESS crud/yui_header.tt %]
+  [% PROCESS crud/page_head_maker.tt %]
+
+  
+  <script type="text/javascript">
+    [% INCLUDE crud/yui_menu.tt %]
+  </script>
+              
+ </head>
+ <body class="yui-skin-sam"><!-- YUI requires this class -->
+  <!-- yui 2.5.0 history feature requires these -->
+  <input id="yui_history_field" type="hidden" />
+  <iframe id="yui_history_iframe" src="[% c.uri_for('/static/empty.null') %]"></iframe>
+
+ 
+ [%
+    # default is to just load menu files from disk each time
+    # could also read it at start time via tt_config.tt, 
+    # but then could not make menu changes to a running app.
+    PROCESS crud/schema_menu.tt;
+    PROCESS crud/menu.tt;
+  %]
+  
+<div id="head">
+ <div id="welcome">Welcome to [% c.config.name %]</div>
+ <!-- TODO implement a "all unique columns" search feature
+ <div id="quicksearch">
+  <form action="[% c.uri_for('/crud/search/fuzzy') %]">
+   <input type="text" size="30" name="q" value="[% c.req.params.q %]" />
+   <input type="submit" name="Search" value="Search" />
+  </form>
+ </div>
+ -->
+ <br style="clear:both" />
+</div>

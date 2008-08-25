@@ -1,0 +1,8 @@
+[% UNLESS no_wrapper;
+    PROCESS crud/header.tt;
+    content;
+    PROCESS crud/footer.tt;
+   ELSE;
+    content;
+   END;
+%]

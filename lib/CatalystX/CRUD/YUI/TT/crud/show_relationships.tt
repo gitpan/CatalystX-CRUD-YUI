@@ -1,0 +1,112 @@
+[%# doc only
+
+=pod
+
+=head1 NAME
+
+show_relationships - TT snippet for relationships
+
+=head1 REQUIRED VARIABLES
+
+The following variables are required:
+
+=head2 form
+
+The basic B<form> variable set in Controller.
+
+=head2 yui
+
+The YUI object set in View.
+
+=head1 OPTIONAL VARIABLES
+
+The following optional variables effect how and which
+relationships are displayed:
+
+=head2 skip_relationships
+
+Hashref of method names. If a relationship method exists in the hash,
+it is skipped.
+
+=head2 alias_relationships
+
+Hashref of method name to method name. If a relationship method appears
+as a hash key, its corresponding value should be another relationship
+method name. B<alias_relationships> can be used with B<skip_relationships>
+to mask some methods or make "foo" act like "bar".
+
+=head2 associations_locked
+
+Hashref of method names. If a relationship method exists in the hash,
+no link is created for the "Create association from I<method_name>" feature.
+
+=head1 SEE ALSO
+
+crud/yui_related_datatable_js.tt
+
+=cut
+
+# end doc
+%]
+[%
+INSERT 'crud/add_row_panel.tt';
+
+CALL yui.show_remove_button(buttons);    # buttons is global flag indicating whether user may edit.
+
+%]
+<script type="text/javascript">
+   /* <![CDATA[ */
+    YAHOO.crud.relatedMatrix = {};
+    /* ]]> */
+</script> 
+[%
+FOREACH rel IN form.metadata.relationships;
+
+    NEXT IF rel.type == 'foreign key';
+    SET rel_info = form.metadata.relationship_info( rel );
+    NEXT IF rel_info.foreign_class == form.metadata.object_class;    
+    SET method = rel_info.method;
+    NEXT IF skip_relationships.exists( method );
+    
+    IF (alias_relationships.exists( method ));
+        SET old_info = rel_info;
+        rel_info = form.metadata.relationship_info( alias_relationships.item( method ) );
+        method = rel_info.method;
+        rel_info.label = old_info.label;
+    END;
+
+    SET datatable = yui.datatable(
+            'results'       => object, 
+            'controller'    => rel_info.controller, 
+            'form'          => rel_info.controller.form(c),
+            'method_name'   => method,
+            'field_names'   => rel_info.controller.form(c).metadata.field_methods,
+    );
+    SET base_url       = c.uri_for('/' _ rel_info.controller.path_prefix);
+    SET map_to         = rel_info.map_class ? rel_info.map_to : rel_info.cmap.each.1;
+    SET create_new_url = base_url _ "/create?" _ map_to _ "=" _ oid;  
+    SET export_as_xls_url = base_url _ "/search?" _ map_to _ "=" _ oid _ '&amp;as_xls=1&amp;_no_page=1';
+%]
+  <form class="crud">
+   <fieldset>
+   <legend>[% object.has_related( method ) _ " related records for " _ (rel_info.label || method) %]</legend>
+   [% IF buttons != 0 %]
+    <div id="[% method %]List" class="add_matrix_row">
+    [% UNLESS associations_locked.exists( method ) %]
+     <a class="box" href="#" onclick="YAHOO.crud.add_matrix_row(YAHOO.crud.relatedMatrix.[% method %]Matrix); return false;"
+       >Create association from [% rel_info.label || method %]</a>
+    [% END %]
+    [% IF (rel_info.controller.can_write(c)) %]
+     <a class="box" href="[% create_new_url %]" >New [% rel_info.label || method %]</a>
+    [% END %]
+     <a class="box" href="[% export_as_xls_url %]">Export related records as Excel</a>
+    </div>
+   [% END %]
+    <div class="pager_wrapper"><div id="[% method %]Pager" class="pager"></div></div>
+    <div id="[% method %]Id" class="related_object_matrix"></div>
+   </fieldset>
+  </form>
+  
+  [% PROCESS crud/yui_related_datatable_js.tt %]
+       
+[% END;  # FOREACH relationship %]

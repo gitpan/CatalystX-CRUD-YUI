@@ -1,0 +1,27 @@
+[%# search result matrix %]
+[%
+    # this template called by crud/search.tt if there
+    # are any search results to display
+%]
+
+<div id="results">
+
+ <div>
+ <div id="results_count">[% results.count %] total matches</div>
+ </div>
+
+ <div class="results pager_wrapper">
+  <div id="pager[% datatable.counter %]" class="pager"></div>
+  <div id="results_autocomplete">
+   <label for="results_ac">Filter results:</label>
+   <input type="text" value="" id="results_ac" class="autocomplete" />
+   <div id="results_ac_hidden" class="hidden" ></div>
+  </div>
+  <br/>
+ </div>
+ <div id="results_matrix[% datatable.counter %]"></div> 
+ 
+ [% PROCESS crud/yui_datatable_js.tt %]
+
+</div>
+

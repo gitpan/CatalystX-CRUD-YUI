@@ -1,0 +1,69 @@
+[% 
+    IF (!rel_info.defined);
+        THROW crud '"rel_info" must be defined in ' _ component.name;
+    END;
+    IF (!datatable.defined);
+        THROW crud '"datatable" must be defined in ' _ component.name;
+    END;
+    IF (!map_to.defined);
+        THROW crud '"map_to" must be defined in ' _ component.name;
+    END;
+    
+    DEFAULT method = rel_info.method;
+
+    SET base_url = c.uri_for('/' _ rel_info.controller.path_prefix);
+%]
+   <script type="text/javascript">
+   /* <![CDATA[ */
+    [%-
+        SET add_remove_button = 0;
+        IF rel_info.map_class;
+            SET m2m = 1;
+            IF buttons != 0;
+                SET add_remove_button = 1;
+            END;
+        ELSE;
+            SET m2m = 0;     
+        END;
+    -%]
+   
+    // populate global relatedMatrix object
+    var [% method %]Opts = 
+    {
+        colDefs:        [% datatable.columns.as_json %],
+        colFilter:      [% datatable.col_filter.as_json %],
+        fields:         [% datatable.col_names.as_json %],
+        panel_width:    '[% c.config.panel.width  || '730px' %]',
+        panel_height:   '[% c.config.panel.height || '300px' %]',
+        pagerId:        '[% method %]Pager',
+        pk:             [% datatable.pk.as_json %],
+        sortBy:         '[% datatable.sort_by %]',
+        info_url:       '[% base_url %]',
+        panel_url:      '[% base_url %]/yui_datatable?',
+        parent:         '[% method %]',
+        parent_url:     '[% c.uri_for(oid) %]',
+        parent_oid:     '[% oid %]',
+        url:            '[% c.uri_for(oid, 'yui_related_datatable', method) %]?_m2m=[% m2m %]&_add_rm_button=[% add_remove_button %]',
+        editable:       [% buttons != 0 ? '1' : '0' %],
+        row_url_method: '[% rel_info.controller.can_write(c) ? 'edit' : 'view' %]',
+        rm_m2m_url:     '[% c.uri_for( oid, method ) %]/',
+        count_url:      '[% base_url %]/yui_datatable_count?_page_size=50',  // small page size
+        no_follow:      [% rel_info.controller.can_read(c) ? 0 : 1 %],
+        anchor:         '[% method %]Matrix',
+        cmap:           [% rel_info.cmap.list('each').as_json || '0' %],
+        pageSize:       15,
+        totalPages:     [% object.has_related_pages(method, 15) %],
+        totalResults:   [% object.has_related(method) %],
+        divId:          "[% method %]Id",
+        anchor:         "[% method %]",
+        name:           "[% method | ucfirst %]",
+        add_remove_button: [% add_remove_button %],
+        map_to:         '[% map_to %]',
+        m2m:            [% m2m %]
+    };
+   
+    // define globally per page so add_row() can find it   
+    YAHOO.crud.relatedMatrix.[% method %]Matrix = YAHOO.crud.related_records_matrix( [% method %]Opts );
+       
+    /* ]]> */
+  </script> 

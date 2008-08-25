@@ -1,0 +1,7 @@
+    <label><!-- satisfy css --></label>
+    <input class="button" type="submit" name="save" value="Save" />
+    <input class="button" type="reset" value="Reset" />
+    [% IF object_id && !no_delete %]
+        <input class="button" type="submit" name="_delete" value="Delete"
+            onclick="return confirm('Really delete?')" />
+    [% END %]

@@ -1,0 +1,52 @@
+[%# generate JS for YUI datatable widget. %]
+[% IF (!datatable.defined);
+    SET datatable = yui.datatable(
+         'results' => results, 'controller' => c.controller(), 'form' => form 
+    ); 
+   END;
+%]
+<script type="text/javascript">
+  /* <![CDATA[ */
+
+    var clickHandler[% datatable.counter %] = function(oArgs) {
+        // get pk value for this row
+        // 'this' should be the DataTable instance 
+        // in myMatrix[% datatable.counter %]
+        YAHOO.util.Event.stopEvent(oArgs.event);
+        var elTargetRow = this.getTrEl( oArgs.target );
+        var record      = this.getRecord(elTargetRow);
+        var pks         = [% datatable.pk.as_json %];
+        var pk_vals     = [];
+        var i;
+        for(i=0; i<pks.length; i++) {
+            pk_vals.push( encodeURIComponent( record.getData(pks[i]) ) );
+        }
+        var pk = pk_vals.join(';;');
+        var newurl      = '[% c.uri_for("/" _ datatable.controller.action_namespace) %]/' + 
+                            pk + 
+                            '/' + 
+                            '[% datatable.controller.can_write(c) ? 'edit' : 'view' %]';
+        window.location.href = newurl;
+    };
+    var matrixOpts[% datatable.counter %] = {
+        colDefs: [% datatable.columns.as_json %],
+        [% IF datatable.col_filter.size %]colFilter: [% datatable.col_filter.as_json %],[% END %]
+        pageSize: [% results.pager.entries_per_page || c.controller.page_size || '50' %],
+        pagerId: 'pager[% datatable.counter %]',  // TODO refactor to make pager id config
+        sortBy: '[% datatable.sort_by %]',
+        pk: [% datatable.pk.as_json %],
+        totalPages: [% results.pager.last_page %],
+        totalResults: [% results.count %],
+        anchor: "matrix[% datatable.counter %]",
+        url: "[% datatable.url %]",
+        divId: "results_matrix[% datatable.counter %]",
+        rowClickHandler: clickHandler[% datatable.counter %],
+        fields: [% datatable.col_names.as_json %]
+    };
+    
+    var myMatrix[% datatable.counter %] = 
+        YAHOO.crud.create_results_matrix(matrixOpts[% datatable.counter %]);
+  
+ /* ]]> */
+</script>
+

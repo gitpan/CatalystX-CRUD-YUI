@@ -1,0 +1,57 @@
+  <!-- YUI support -->
+  <!-- reset css -->
+  <link rel="stylesheet" type="text/css" 
+        href="[% YUIBaseURL %]/[% YUIVersion %]/build/reset-fonts-grids/reset-fonts-grids.css" />
+
+  <!-- Core + Skin CSS -->
+  <link rel="stylesheet" type="text/css" 
+        href="[% YUIBaseURL %]/[% YUIVersion %]/build/assets/skins/sam/skin.css" />
+
+  <link type="text/css" rel="stylesheet" 
+        href="[% YUIBaseURL %]/[% YUIVersion %]/build/calendar/assets/skins/sam/calendar.css" /> 
+
+  <link type="text/css" rel="stylesheet" 
+        href="[% YUIBaseURL %]/[% YUIVersion %]/build/button/assets/skins/sam/button.css" /> 
+        
+  <!-- CRUD style -->
+  <link rel="stylesheet" type="text/css" media="all"
+        href="[% static_url %]/css/crud.css" />
+
+
+<!-- js -->
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/connection/connection-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/utilities/utilities.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/container/container-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/menu/menu-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/logger/logger-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/autocomplete/autocomplete-min.js"></script>
+
+ <!-- important!! these next 4 must load in this exact order -->
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/datasource/datasource-beta-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/json/json-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/history/history-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/datatable/datatable-beta-min.js"></script>
+
+
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/dragdrop/dragdrop-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/calendar/calendar-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/resize/resize-beta-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/animation/animation-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/layout/layout-beta-min.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/button/button-min.js"></script>
+  
+
+<!-- local js -->
+  <script type="text/javascript">
+    /* <![CDATA[ */
+        // must come before crud.js is loaded
+        YAHOO.namespace('crud');
+        YAHOO.crud.OK2LOG = [% c.config.js_debug ? '1' : '0' %];
+    /* ]]> */
+  </script>
+
+  <script type="text/javascript" src="[% static_url %]/js/crud.js"></script>
+  <script type="text/javascript" src="[% static_url %]/js/json.js"></script>
+  
+

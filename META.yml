@@ -1,0 +1,21 @@
+# http://module-build.sourceforge.net/META-spec.html
+#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
+name:         CatalystX-CRUD-YUI
+version:      0.001
+version_from: lib/CatalystX/CRUD/YUI.pm
+installdirs:  site
+requires:
+    Catalyst::View::TT:            0
+    CatalystX::CRUD:               0.29
+    CatalystX::CRUD::Controller::RHTMLO: 0.15
+    CatalystX::CRUD::View::Excel:  0.05
+    Class::C3:                     0
+    Path::Class:                   0
+    Rose::HTMLx::Form::Related:    0.03
+    Scalar::Util:                  0
+    Template:                      0
+    Test::More:                    0
+    Text::Autoformat:              0
+
+distribution_type: module
+generated_by: ExtUtils::MakeMaker version 6.30
