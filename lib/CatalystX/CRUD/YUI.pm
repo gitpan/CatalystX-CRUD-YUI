@@ -7,10 +7,11 @@ use CatalystX::CRUD::YUI::DataTable;
 use CatalystX::CRUD::YUI::Serializer;
 use base qw( Class::Accessor::Fast );
 use Class::C3;
+use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datatable_class serializer_class ));
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 =head1 NAME
 
@@ -18,11 +19,29 @@ CatalystX::CRUD::YUI - YUI for your CatalystX::CRUD view
 
 =head1 SYNOPSIS
 
- # TODO
+ package MyApp::Controller::Foo;
+ use strict;
+ use base qw(
+    CatalystX::CRUD::YUI::Controller
+    CatalystX::CRUD::Controller::RHTMLO
+ );
+ 
+ # config here -- see CatalystX::CRUD::Controller docs
+ 
+ 1;
 
 =head1 DESCRIPTION
 
- # TODO
+CatalystX::CRUD::YUI is a crud application using the Yahoo
+User Interface toolkit and CatalystX::CRUD components. It is
+derived largely from the Rose::DBx::Garden::Catalyst project
+but now with support for DBIx::Class via the 
+CatalystX::CRUD::ModelAdapter::DBIC package.
+
+The t/ test directly for this package contains two full
+Catalyst applications, one for RDBO and one for DBIC, both
+using the same basic db schema. Looking at those examples 
+is a good way to start.
  
 =head1 METHODS
 
@@ -95,7 +114,6 @@ sub _fix_args {
 
 sub datatable {
     my $self = shift;
-    #carp "get datatable";
     return $self->datatable_class->new( _fix_args(@_), yui => $self );
 }
 

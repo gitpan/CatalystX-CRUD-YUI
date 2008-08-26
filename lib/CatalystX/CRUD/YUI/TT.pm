@@ -7,7 +7,7 @@ use Data::Dump qw( dump );
 use Template::Stash;
 use JSON::XS;
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 # package object
 my $JSON = JSON::XS->new;

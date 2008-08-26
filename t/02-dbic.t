@@ -11,10 +11,17 @@ SKIP: {
     if ($@) {
         skip "install DBIx::Class to test MyDBIC app", 9;
     }
+    eval "use DBIx::Class::RDBOHelpers";
+    if ($@) {
+        skip "install DBIx::Class::RDBOHelpers to test MyDBIC app", 9;
+    }
 
     use lib 't/MyDBIC/lib';
 
-    use Catalyst::Test 'MyDBIC';
+    # require to defer till skip checks
+    require Catalyst::Test;
+    Catalyst::Test->import('MyDBIC');
+
     use HTTP::Request::Common;
     use Data::Dump qw( dump );
     use JSON::XS;
@@ -62,5 +69,6 @@ SKIP: {
         },
         "json response"
     );
+
 
 }

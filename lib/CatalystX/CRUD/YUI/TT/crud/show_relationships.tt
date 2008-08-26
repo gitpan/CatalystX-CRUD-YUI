@@ -75,13 +75,13 @@ FOREACH rel IN form.metadata.relationships;
         rel_info.label = old_info.label;
     END;
 
-    SET datatable = yui.datatable(
+    SET datatable = yui.datatable({
             'results'       => object, 
-            'controller'    => rel_info.controller, 
-            'form'          => rel_info.controller.form(c),
+            'controller'    => rel_info.get_controller, 
+            'form'          => rel_info.get_controller.form(c),
             'method_name'   => method,
-            'field_names'   => rel_info.controller.form(c).metadata.field_methods,
-    );
+            'field_names'   => rel_info.get_controller.form(c).metadata.field_methods,
+    });
     SET base_url       = c.uri_for('/' _ rel_info.controller.path_prefix);
     SET map_to         = rel_info.map_class ? rel_info.map_to : rel_info.cmap.each.1;
     SET create_new_url = base_url _ "/create?" _ map_to _ "=" _ oid;  

@@ -10,7 +10,7 @@ use JSON::XS ();
 use Scalar::Util qw( blessed );
 use CatalystX::CRUD::YUI::Serializer;
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 __PACKAGE__->mk_accessors(
     qw( yui results controller form
@@ -45,11 +45,7 @@ CatalystX::CRUD::YUI::DataTable - YUI DataTable objects
 Create a YUI DataTable object.
 You usually call this via CatalystX::CRUD::YUI->datatable( I<opts> ).
 
-=cut
-
-=head2 Attributes
-
-A DataTable object has the following attributes:
+I<opts> should include:
 
 =over
 
@@ -80,6 +76,12 @@ object class represented by I<method_name>.
 
 The I<controller> object should be the governing controller for
 the objects being serialized, i.e., the controller governing I<form>.
+
+=back
+
+The new DataTable has the following accessors available:
+
+=over
 
 =item pk
 

@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui ));
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 =head1 NAME
 
@@ -213,10 +213,8 @@ sub serialize_object {
         }
 
         # booleans
-        # TODO DBIC et al.
-        elsif ( $object->isa('Rose::DB::Object')
-            and $object->meta->column($col)
-            and $object->meta->column($col)->type eq 'boolean' )
+        elsif ( $object->can('column_is_boolean')
+            and $object->column_is_boolean($col) )
         {
             $flat->{$col} = $object->$col ? 'true' : 'false';
         }

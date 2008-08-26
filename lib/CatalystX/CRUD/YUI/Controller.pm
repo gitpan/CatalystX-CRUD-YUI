@@ -8,7 +8,7 @@ use Class::C3;
 
 __PACKAGE__->mk_accessors(qw( autocomplete_columns autocomplete_method ));
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 =head1 NAME
 
@@ -77,9 +77,9 @@ in format the YUI DataTable expects.
 
 sub yui_datatable : Local {
     my ( $self, $c, @arg ) = @_;
-    $c->stash->{view_on_single_result} = 0;
+    $c->stash( view_on_single_result => 0 );
     $self->do_search( $c, @arg );
-    $c->stash->{template} = 'crud/yui_datatable.tt';
+    $c->stash( template => 'crud/yui_datatable.tt' );
     $c->response->content_type( $self->json_mime );
 }
 
@@ -92,10 +92,12 @@ in format the YUI DataTable expects.
 
 sub yui_datatable_count : Local {
     my ( $self, $c, @arg ) = @_;
-    $c->stash->{fetch_no_results}      = 1;
-    $c->stash->{view_on_single_result} = 0;
+    $c->stash(
+        fetch_no_results      => 1,
+        view_on_single_result => 0,
+    );
     $self->do_search( $c, @arg );
-    $c->stash->{template} = 'crud/yui_datatable_count.tt';
+    $c->stash( template => 'crud/yui_datatable_count.tt' );
     $c->response->content_type( $self->json_mime );
 }
 
@@ -108,9 +110,9 @@ referred to by I<relationship_name>.
 
 sub yui_related_datatable : PathPart Chained('fetch') Args(1) {
     my ( $self, $c, $rel_name ) = @_;
-    $c->stash->{view_on_single_result} = 0;
+    $c->stash( view_on_single_result => 0 );
     $self->do_related_search( $c, $rel_name );
-    $c->stash->{template} = 'crud/yui_datatable.tt';
+    $c->stash( template => 'crud/yui_datatable.tt' );
     $c->response->content_type( $self->json_mime );
 }
 
@@ -157,10 +159,11 @@ sub do_related_search {
     # set the controller so we mimic the foreign controller
     my $relinfo = $c->stash->{form}->metadata->relationship_info($rel_name);
     $c->stash(
-        controller  => $relinfo->controller,
+        controller  => $relinfo->get_controller,
         method_name => $rel_name,
-        form        => $relinfo->controller->form($c),
-        field_names => $relinfo->controller->form($c)->metadata->field_methods
+        form        => $relinfo->get_controller->form($c),
+        field_names =>
+            $relinfo->get_controller->form($c)->metadata->field_methods
     );
 }
 
@@ -180,6 +183,8 @@ sub remove : PathPart Chained('related') Args(0) {
     eval { $self->next::method($c) };
 
     if ( $@ or $self->has_errors($c) ) {
+        $c->log->error($@);
+        $c->log->error($_) for @{ $c->error };
         $c->clear_errors;
         $c->res->body("Error removing related object");
         $c->res->status(500);
@@ -187,6 +192,7 @@ sub remove : PathPart Chained('related') Args(0) {
     }
     else {
         $c->response->body('Ok');
+        $c->response->status(200);    # because we are returning content
     }
 }
 
@@ -207,10 +213,9 @@ sub add : PathPart Chained('related') Args(0) {
     my $foreign_pk_value = $c->stash->{foreign_pk_value};
 
     # check first if already defined so we don't try and re-add
-    for my $rec ( @{ $obj->$rel } ) {
-        my $pk = $rec->primary_key_value;
-        my $pkval = join( ';;', ref $pk ? @$pk : ($pk) );
-        if ( $pkval eq $foreign_pk_value ) {
+    for my $rec ( $obj->$rel ) {
+        my $pk = $rec->primary_key_uri_escaped;
+        if ( $pk eq $foreign_pk_value ) {
             $c->res->body(
                 "Related $rel record $foreign_pk_value already associated.");
             $c->res->status(400);
@@ -221,6 +226,8 @@ sub add : PathPart Chained('related') Args(0) {
     eval { $self->next::method($c) };
 
     if ( $@ or $self->has_errors($c) ) {
+        $c->log->error($@);
+        $c->log->error($_) for @{ $c->error };
         $c->clear_errors;
         $c->res->body("Error adding related object");
         $c->res->status(500);
@@ -228,10 +235,9 @@ sub add : PathPart Chained('related') Args(0) {
     }
 
     my $record;
-    for my $rec ( @{ $obj->$rel } ) {
-        my $pk = $rec->primary_key_value;
-        my $pkval = join( ';;', ref $pk ? @$pk : ($pk) );
-        if ( $pkval eq $foreign_pk_value ) {
+    for my $rec ( $obj->$rel ) {
+        my $pk = $rec->primary_key_uri_escaped;
+        if ( $pk eq $foreign_pk_value ) {
             $record = $rec;
             last;
         }
@@ -243,8 +249,8 @@ sub add : PathPart Chained('related') Args(0) {
     }
 
     # we want the column names, etc., from the foreign controller's form.
-    my $foreign_form = $self->form->metadata->relationship_info($rel)
-        ->controller->form($c);
+    my $foreign_form = $self->form($c)->metadata->relationship_info($rel)
+        ->get_controller->form($c);
     $c->stash(
         template    => 'crud/jsonify.tt',
         serial_args => {

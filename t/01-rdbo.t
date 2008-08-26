@@ -11,6 +11,10 @@ SKIP: {
     if ($@) {
         skip "install Rose::DB::Object to test MyRDBO app", 9;
     }
+    eval "use Rose::DBx::Object::MoreHelpers";
+    if ($@) {
+        skip "Rose::DBx::Object::MoreHelpers required to test MyRDBO app", 9,
+    }
     eval "use CatalystX::CRUD::Model::RDBO '0.13'";
     if ($@) {
         skip "CatalystX::CRUD::Model::RDBO 0.13 required to test MyRDBO app", 9;

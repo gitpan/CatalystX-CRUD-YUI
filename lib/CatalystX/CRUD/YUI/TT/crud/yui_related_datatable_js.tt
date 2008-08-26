@@ -11,7 +11,7 @@
     
     DEFAULT method = rel_info.method;
 
-    SET base_url = c.uri_for('/' _ rel_info.controller.path_prefix);
+    SET base_url = c.uri_for('/' _ datatable.controller.path_prefix);
 %]
    <script type="text/javascript">
    /* <![CDATA[ */
