@@ -10,7 +10,7 @@ use JSON::XS ();
 use Scalar::Util qw( blessed );
 use CatalystX::CRUD::YUI::Serializer;
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 
 __PACKAGE__->mk_accessors(
     qw( yui results controller form
@@ -175,13 +175,15 @@ sub _init {
 
     #carp dump $results;
 
+    #Carp::cluck();
+
     if ( $results->isa('CatalystX::CRUD::Results')
         && defined $results->query )
     {
         $self->url(
             $form->app->uri_for(
                 $controller->action_for('yui_datatable'),
-                $results->query->{plain_query}
+                $results->query->{plain_query} || {}
             )
         );
     }
@@ -208,6 +210,11 @@ sub _init {
     $self->{url} .= '?' unless $self->{url} =~ m/\?/;
 
     for my $field_name (@col_names) {
+
+        # we include PKs specially at the end
+        if ( grep { $_ eq $field_name } @{ $self->{pk} } ) {
+            next;
+        }
 
         my $isa_field = $form->field($field_name);
 
@@ -238,10 +245,6 @@ sub _init {
             push( @{ $self->{col_filter} }, $field_name );
         }
 
-        if ( grep { $_ eq $field_name } @{ $self->{pk} } ) {
-            next;
-        }
-
         next unless $form->metadata->show_related_values;
         next unless $form->metadata->is_related_field($field_name);
 
@@ -255,6 +258,24 @@ sub _init {
         };
 
     }
+
+    # always include pk since that's what is used for links
+    my $pk_name = join( ';;', @{ $self->{pk} } );
+    push(
+        @{ $self->{columns} },
+        {   key => $pk_name,
+
+            # must force label object to stringify
+            label => ( $form->metadata->labels->{$pk_name} || $pk_name ),
+
+            sortable => JSON::XS::true(),
+
+            # per-column click
+            url =>
+                $form->app->uri_for( $form->metadata->field_uri($pk_name) ),
+        }
+    );
+    push( @{ $self->{col_names} }, $pk_name );
 
     return $self;
 

@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datatable_class serializer_class ));
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 
 =head1 NAME
 

@@ -1,6 +1,10 @@
-package MyRDBO::Controller::CRUD::Test::Foo;
+package MyRDBO::Controller::CRUD::Test::FooREST;
 use strict;
-use base qw( MyRDBO::Base::Controller::RHTMLO );
+use base qw(
+    CatalystX::CRUD::REST
+    MyRDBO::Base::Controller::RHTMLO
+);
+use Class::C3;
 use YUI::Test::Foo::Form;
 
 __PACKAGE__->config(
@@ -13,6 +17,13 @@ __PACKAGE__->config(
     view_on_single_result => 1,
     page_size             => 50,
 );
+
+sub chain_test : PathPart Chained('fetch') Args(0) {
+    my ( $self, $c ) = @_;
+    $c->log->debug("chain test") if $c->debug;
+    $c->res->status(200);
+    $c->res->body('chain_test worked');
+}
 
 1;
 

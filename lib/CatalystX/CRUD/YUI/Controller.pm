@@ -8,7 +8,7 @@ use Class::C3;
 
 __PACKAGE__->mk_accessors(qw( autocomplete_columns autocomplete_method ));
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 
 =head1 NAME
 
@@ -126,20 +126,9 @@ represented by I<relationship_name>.
 sub do_related_search {
     my ( $self, $c, $rel_name ) = @_;
 
-    my $obj = $c->stash->{object};
-    my $query = $self->do_model( $c, 'make_query' );
-
-    # TODO this section is specific to RDBO. refactor it.
-    # many2many relationships always have two tables,
-    # and we are sorting my the 2nd one. The 1st one is the mapper.
-    if ( $c->req->params->{_m2m} ) {
-        $query->{sort_by} =~ s/t1\./t2\./g;    # re-disambiguate id and name
-        if ( $query->{sort_by} !~ m/t\d\./ ) {
-            $query->{sort_by} = join( '.', 't2', $query->{sort_by} );
-        }
-    }
-
-    my $count = $obj->has_related($rel_name);
+    my $obj     = $c->stash->{object};
+    my $query   = $self->do_model( $c, 'make_sql_query' );
+    my $count   = $obj->has_related($rel_name);
     my $results = $self->do_model( $c, 'iterator_related', $obj, $rel_name );
     my $pager;
     if ($count) {
@@ -215,6 +204,8 @@ sub add : PathPart Chained('related') Args(0) {
     # check first if already defined so we don't try and re-add
     for my $rec ( $obj->$rel ) {
         my $pk = $rec->primary_key_uri_escaped;
+
+        #warn "add compare: $pk <-> $foreign_pk_value";
         if ( $pk eq $foreign_pk_value ) {
             $c->res->body(
                 "Related $rel record $foreign_pk_value already associated.");
@@ -249,8 +240,15 @@ sub add : PathPart Chained('related') Args(0) {
     }
 
     # we want the column names, etc., from the foreign controller's form.
-    my $foreign_form = $self->form($c)->metadata->relationship_info($rel)
-        ->get_controller->form($c);
+    my $foreign_controller
+        = $self->form($c)->metadata->relationship_info($rel)->get_controller;
+    my $foreign_form = $foreign_controller->form($c);
+    my $foreign_pk   = $foreign_controller->primary_key;
+
+    # list of columns must include PK but that is often not in Form
+    # if is an autoincrem value
+    my @fields = @{ $foreign_form->metadata->field_methods };
+    push( @fields, ref $foreign_pk ? @$foreign_pk : $foreign_pk );
     $c->stash(
         template    => 'crud/jsonify.tt',
         serial_args => {
@@ -258,7 +256,7 @@ sub add : PathPart Chained('related') Args(0) {
             parent => $obj,
             takes_object_as_argument =>
                 $foreign_form->metadata->takes_object_as_argument,
-            col_names => $foreign_form->metadata->field_methods,
+            col_names => \@fields,
         }
     );
     $c->response->content_type( $self->json_mime );

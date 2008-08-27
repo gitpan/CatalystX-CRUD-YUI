@@ -14,13 +14,14 @@ WriteMakefile(
         'Template'          => 0,
         'Text::Autoformat'   => 0,
         'Catalyst::View::TT' => 0,
-        'CatalystX::CRUD'                     => 0.29,
+        'CatalystX::CRUD'                     => 0.30,
         #'CatalystX::CRUD::Model::RDBO'        => 0.13, # not required
-        'Rose::HTMLx::Form::Related'          => 0.03,
-        'CatalystX::CRUD::Controller::RHTMLO' => 0.16,
+        'Rose::HTMLx::Form::Related'          => 0.06,
+        'CatalystX::CRUD::Controller::RHTMLO' => 0.17,
         'CatalystX::CRUD::View::Excel'        => 0.05,
         'Scalar::Util'     => 0,
         'Class::C3'        => 0,
+        'JSON::XS'         => 2.0,
 
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

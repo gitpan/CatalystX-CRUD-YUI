@@ -12,7 +12,6 @@ __PACKAGE__->config(
     primary_key             => ['id'],
     view_on_single_result   => 1,
     page_size               => 50,
-    garden_class            => 'YUI',
 );
 
 1;

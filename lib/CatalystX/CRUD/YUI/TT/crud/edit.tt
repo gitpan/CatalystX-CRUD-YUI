@@ -21,6 +21,9 @@
    </legend>
    [% END %]
     
+    <input type="hidden" id="x-tunneled-method" 
+           name="x-tunneled-method" value="[% oid ? 'POST' : 'PUT' %]" />
+    
     [% PROCESS crud/form.tt %]
     
     [% 

@@ -1,7 +1,7 @@
-use Test::More tests => 9;
+use Test::More tests => 13;
 
 BEGIN {
-    $ENV{CATALYST_DEBUG} = 0;
+    $ENV{CATALYST_DEBUG} ||= 0;
     use lib '../Rose-HTMLx-Form-Related/lib';
 }
 
@@ -9,20 +9,24 @@ SKIP: {
 
     eval "use Rose::DB::Object";
     if ($@) {
-        skip "install Rose::DB::Object to test MyRDBO app", 9;
+        skip "install Rose::DB::Object to test MyRDBO app", 13;
     }
     eval "use Rose::DBx::Object::MoreHelpers";
     if ($@) {
-        skip "Rose::DBx::Object::MoreHelpers required to test MyRDBO app", 9,
+        skip "Rose::DBx::Object::MoreHelpers required to test MyRDBO app", 13;
     }
     eval "use CatalystX::CRUD::Model::RDBO '0.13'";
     if ($@) {
-        skip "CatalystX::CRUD::Model::RDBO 0.13 required to test MyRDBO app", 9;
+        skip "CatalystX::CRUD::Model::RDBO 0.13 required to test MyRDBO app",
+            13;
     }
 
     use lib 't/MyRDBO/lib';
 
-    use Catalyst::Test 'MyRDBO';
+    # require to defer till skip checks
+    require Catalyst::Test;
+    Catalyst::Test->import('MyRDBO');
+
     use HTTP::Request::Common;
     use Data::Dump qw( dump );
     use JSON::XS;
@@ -70,5 +74,17 @@ SKIP: {
         },
         "json response"
     );
+
+    ok( my $chain_rest_test = request('/crud/test/foorest/1/chain_test'),
+        "chain_rest_test" );
+    is( $chain_rest_test->headers->{status}, 200, "chain test" );
+
+    #dump $chain_rest_test;
+
+    ok( my $create_form_test = request('/crud/test/foo/create'),
+        "create action" );
+    is( $create_form_test->headers->{status}, 200, "create action works" );
+
+    #dump $create_form_test;
 
 }

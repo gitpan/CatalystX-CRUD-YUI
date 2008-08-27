@@ -3,7 +3,17 @@ Revision history for CatalystX-CRUD-YUI
 0.001   24 Aug 2008
         First version, released on an unsuspecting world.
 
-0.002   xxx
+0.002   25 Aug 2008
         * change show_relationships.tt to use RelInfo->get_controller
         * tweek skip() checks in tests
+
+0.003   26 Aug 2008
+        * add missing JSON::XS to Makefile.PL dependencies
+        * get_controller() fixes
+        * lots of fixes to support the change in RHTMLO where
+          autoincrement fields are no longer in $form
+
+
+
+
 

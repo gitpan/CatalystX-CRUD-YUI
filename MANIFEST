@@ -100,6 +100,7 @@ t/MyRDBO/lib/MyRDBO/Base/Model/RDBO.pm
 t/MyRDBO/lib/MyRDBO/Controller/CRUD.pm
 t/MyRDBO/lib/MyRDBO/Controller/CRUD/Test/Bar.pm
 t/MyRDBO/lib/MyRDBO/Controller/CRUD/Test/Foo.pm
+t/MyRDBO/lib/MyRDBO/Controller/CRUD/Test/FooREST.pm
 t/MyRDBO/lib/MyRDBO/Controller/CRUD/Test/Goo.pm
 t/MyRDBO/lib/MyRDBO/Controller/Root.pm
 t/MyRDBO/lib/MyRDBO/Model/CRUD/Test/Bar.pm

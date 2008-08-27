@@ -3,5 +3,7 @@
     <input class="button" type="reset" value="Reset" />
     [% IF object_id && !no_delete %]
         <input class="button" type="submit" name="_delete" value="Delete"
-            onclick="return confirm('Really delete?')" />
+            onclick="if(confirm('Really delete?')){
+                        YAHOO.util.Dom.get('x-tunneled-method').value='DELETE';
+                        return true; } else { return false; }" />
     [% END %]
