@@ -49,17 +49,25 @@ crud/yui_related_datatable_js.tt
 # end doc
 %]
 [%
-INSERT 'crud/add_row_panel.tt';
 
-CALL yui.show_remove_button(buttons);    # buttons is global flag indicating whether user may edit.
+# don't bother if we do not have any relationships
+IF (!form.metadata.relationships.size);
+    RETURN;
+END;
+
+# buttons is global flag indicating whether user may edit.
+CALL yui.show_remove_button(buttons);
 
 %]
 <script type="text/javascript">
    /* <![CDATA[ */
     YAHOO.crud.relatedMatrix = {};
     /* ]]> */
-</script> 
+</script>
+<div id="relTabs">
 [%
+# TODO since we use tabs, only load datatables when they are selected
+SET Tabs = [];
 FOREACH rel IN form.metadata.relationships;
 
     NEXT IF rel.type == 'foreign key';
@@ -75,6 +83,14 @@ FOREACH rel IN form.metadata.relationships;
         rel_info.label = old_info.label;
     END;
     
+    SET thisLabel = rel_info.label || method;
+    
+    # create the tab structure
+    Tabs.push({ 
+        label => thisLabel,
+        id    => thisLabel _ 'Tab',
+    });
+    
     # in case we have not yet initialized the controller instance
     CALL rel_info.get_controller;
     
@@ -87,23 +103,46 @@ FOREACH rel IN form.metadata.relationships;
     });
         
     SET base_url       = c.uri_for('/' _ rel_info.controller.path_prefix);
-    SET map_to         = rel_info.map_class ? rel_info.map_to : rel_info.cmap.each.1;
-    SET create_new_url = base_url _ "/create?" _ map_to _ "=" _ oid;  
-    SET export_as_xls_url = base_url _ "/search?" _ map_to _ "=" _ oid _ '&amp;as_xls=1&amp;_no_page=1';
+    SET map_params     = {};
+    SET map_to         = '';
+    IF (rel_info.type == 'many to many');
+        # TODO this is just wrong.
+        # should map to the foreign column value
+        map_to      = rel_info.map_to;
+        map_params  = { $map_to => oid };
+    ELSE;
+        FOREACH local_col IN rel_info.cmap.keys.sort;
+            SET fk          = rel_info.cmap.$local_col;
+            map_params.$fk  = object.$local_col;
+        END;
+        IF (map_params.keys.size == 1);
+            map_to = rel_info.cmap.each.1;
+        ELSE;
+            #THROW crud '"map_to" not yet supported for multiple-column FKs in ' _ component.name;
+            map_to = rel_info.cmap.values.join(';;');
+        END;
+    END;
+            
+    USE create_new_url    = url(base_url _ "/create", map_params);  
+    USE export_as_xls_url = url(base_url _ "/search", map_params);
+    export_as_xls_url     = export_as_xls_url _ '&amp;cxc-fmt=xls&amp;cxc-no_page=1';
 %]
-  <form class="crud">
+ <div class="x-tab" title="[% thisLabel %]" id="[% thisLabel %]Tab" >
+  <form class="crud">[%# use <form> just to abuse css %]
    <fieldset>
-   <legend>[% object.has_related( method ) _ " related records for " _ (rel_info.label || method) %]</legend>
+   <legend>[% object.has_related( method ) _ " related records for " _ thisLabel %]</legend>
    [% IF buttons != 0 %]
     <div id="[% method %]List" class="add_matrix_row">
     [% UNLESS associations_locked.exists( method ) %]
      <a class="box" href="#" onclick="YAHOO.crud.add_matrix_row(YAHOO.crud.relatedMatrix.[% method %]Matrix); return false;"
-       >Create association from [% rel_info.label || method %]</a>
+       >Create association from [% thisLabel %]</a>
     [% END %]
     [% IF (rel_info.controller.can_write(c)) %]
-     <a class="box" href="[% create_new_url %]" >New [% rel_info.label || method %]</a>
+     <a class="box" href="[% create_new_url %]" >New [% thisLabel %]</a>
     [% END %]
+    [% UNLESS rel_info.map_class # TODO support excel export for m2m records %]
      <a class="box" href="[% export_as_xls_url %]">Export related records as Excel</a>
+    [% END %]
     </div>
    [% END %]
     <div class="pager_wrapper"><div id="[% method %]Pager" class="pager"></div></div>
@@ -112,5 +151,43 @@ FOREACH rel IN form.metadata.relationships;
   </form>
   
   [% PROCESS crud/yui_related_datatable_js.tt %]
-       
+ </div><!-- end Tab[% loop.count %] -->
+ 
 [% END;  # FOREACH relationship %]
+</div><!-- end relTabs -->
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    [%# we don't know if there were any valid rels till
+        after we've looped over them all, so remove the relTabs
+        wrapper div if we do not have any.
+    -%]
+    [%- IF !Tabs.size -%]
+    var wrapperDiv = YAHOO.util.Dom.get('relTabs');
+    var parentDiv  = YAHOO.util.Dom.getAncestorByTagName(wrapperDiv, 'div');
+    parentDiv.removeChild(wrapperDiv);
+    [% ELSE %]
+    YAHOO.crud.Tabs = [% Tabs.as_json %];
+    var makeRelTabs = function() {
+        YAHOO.crud.relTabs = new YAHOO.widget.TabView('relTabs');
+        var i;
+        for(i=0; i<YAHOO.crud.Tabs.length; i++) {
+            var t = YAHOO.crud.Tabs[i];
+            var tab = new YAHOO.widget.Tab( 
+                    {   label: t.label,
+                        contentEl: YAHOO.util.Dom.get(t.id),
+                        active: i == 0 ? true : false,
+                        href: '#' + t.id
+                    }
+                );
+            YAHOO.crud.relTabs.addTab( tab );
+        }
+    };
+    YAHOO.util.Event.onDOMReady(makeRelTabs);
+    [% END %]
+/* ]]> */
+</script>
+
+[% # after all rels done so page size is calculated correctly
+   INSERT 'crud/add_row_panel.tt'; 
+%]

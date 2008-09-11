@@ -11,12 +11,10 @@
         href="[% YUIBaseURL %]/[% YUIVersion %]/build/calendar/assets/skins/sam/calendar.css" /> 
 
   <link type="text/css" rel="stylesheet" 
-        href="[% YUIBaseURL %]/[% YUIVersion %]/build/button/assets/skins/sam/button.css" /> 
+        href="[% YUIBaseURL %]/[% YUIVersion %]/build/button/assets/skins/sam/button.css" />
         
-  <!-- CRUD style -->
-  <link rel="stylesheet" type="text/css" media="all"
-        href="[% static_url %]/css/crud.css" />
-
+  <link type="text/css" rel="stylesheet" 
+        href="[% YUIBaseURL %]/[% YUIVersion %]/build/tabview/assets/skins/sam/tabview.css" /> 
 
 <!-- js -->
   <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/yahoo-dom-event/yahoo-dom-event.js"></script>
@@ -40,18 +38,6 @@
   <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/animation/animation-min.js"></script>
   <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/layout/layout-beta-min.js"></script>
   <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/button/button-min.js"></script>
-  
-
-<!-- local js -->
-  <script type="text/javascript">
-    /* <![CDATA[ */
-        // must come before crud.js is loaded
-        YAHOO.namespace('crud');
-        YAHOO.crud.OK2LOG = [% c.config.js_debug ? '1' : '0' %];
-    /* ]]> */
-  </script>
-
-  <script type="text/javascript" src="[% static_url %]/js/crud.js"></script>
-  <script type="text/javascript" src="[% static_url %]/js/json.js"></script>
+  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/tabview/tabview-min.js"></script>
   
 

@@ -11,7 +11,7 @@ use Class::Inspector;
 use CatalystX::CRUD::YUI;
 use CatalystX::CRUD::YUI::TT;
 
-our $VERSION = '0.003';
+our $VERSION = '0.004';
 
 =head1 NAME
 
@@ -19,11 +19,12 @@ CatalystX::CRUD::YUI::View - base View class
 
 =head1 SYNOPSIS
 
- # TODO
+ # see catalyst::View::TT
 
 =head1 DESCRIPTION
 
- # TODO
+CatalystX::CRUD::YUI::View is a subclass of Catalyst::View::TT that
+extends the base class in a few minor ways. See METHODS for details.
 
 =head1 CONFIGURATION
 
@@ -89,7 +90,7 @@ sub new {
         }
         push( @inc_path, $path );
     }
-    
+
     #dump \@inc_path;
 
     $class->config( { INCLUDE_PATH => \@inc_path } );
@@ -150,6 +151,48 @@ sub template_vars {
         );
 }
 
+=head2 process
+
+Overrides base method to test if C<template> is set in stash,
+and if it is, tests that it exists before calling next::method().
+If it does not exist, will change the C<template> value in stash
+to be C<crud/I<file>.tt>> in order to call the default crud template.
+
+This path mangling allows you to avoid creating .tt files for all your actions
+unless you want to override the default template's behaviour.
+
+=cut
+
+sub process {
+    my ( $self, $c ) = @_;
+
+    my $template = $c->stash->{template}
+        || $c->action . $self->config->{TEMPLATE_EXTENSION};
+    unless ( defined $template ) {
+        $c->log->debug('No template specified for rendering') if $c->debug;
+        return 0;
+    }
+
+    # test for file existence
+    my $template_exists;
+    for my $base ( @{ $self->paths } ) {
+        my $file = Path::Class::file( $base, $template );
+        if ( -s $file ) {
+            $template_exists = 1;
+            last;
+        }
+    }
+    unless ($template_exists) {
+        my $file     = Path::Class::file($template);
+        my $basename = $file->basename;
+        $c->log->debug("using default template $basename") if $c->debug;
+        $c->stash( template => Path::Class::file( 'crud', $basename ) . '' );
+    }
+
+    return $self->next::method($c);
+
+}
+
 1;
 
 __END__
@@ -173,7 +216,7 @@ sponsored the development of this software.
 =head1 COPYRIGHT & LICENSE
 
 Copyright 2008 by the Regents of the University of Minnesota.
-All Rights Reserved.
+
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

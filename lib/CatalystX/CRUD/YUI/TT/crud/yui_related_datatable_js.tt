@@ -5,28 +5,57 @@
     IF (!datatable.defined);
         THROW crud '"datatable" must be defined in ' _ component.name;
     END;
-    IF (!map_to.defined);
-        THROW crud '"map_to" must be defined in ' _ component.name;
-    END;
     
     DEFAULT method = rel_info.method;
 
     SET base_url = c.uri_for('/' _ datatable.controller.path_prefix);
+    
+    SET foreign = {
+        'url'           => base_url,
+        'panel'         => base_url _ '/yui_datatable?',
+        'column_map'    => rel_info.cmap.list('each') || 0,
+        'method'        => rel_info.controller.can_write(c) ? 'edit' : 'view',
+        'name'          => method,
+        'view_perm'     => rel_info.controller.can_read(c) ? 0 : 1,
+        'rm_button'     => 0,
+        'm2m'           => 0,
+    };
+    
+    # controller can define extra query params to limit the returned dataset
+    IF (rel_info.controller.can('yui_datatable_filter'));
+        SET extra_params = rel_info.controller.yui_datatable_filter(c, object, rel_info);
+        foreign.panel = foreign.panel _ extra_params;
+    END;
+    
+    # UI controls
+    IF rel_info.map_class;
+        SET foreign.m2m = 1;
+        IF buttons != 0;
+            SET foreign.rm_button = 1;
+        END;
+    END;
+    
+    SET parent = { 
+        'column_map'    => [], 
+        'url'           => c.uri_for(oid),
+        'oid'           => oid,
+        'datatable'     => c.uri_for(oid, 'yui_related_datatable', method, 
+                                {   'cxc-m2m'           => foreign.m2m, 
+                                    'cxc-add_rm_button' => foreign.rm_button
+                                }),
+        # pageSize should match below
+        'count'         => c.uri_for('yui_datatable_count',
+                                {  'cxc-page_size' => 15  }),
+    };
+    FOR col_name = rel_info.cmap.keys;
+        parent.column_map.push( col_name );
+        parent.column_map.push( object.$col_name );
+    END;    
+
 %]
    <script type="text/javascript">
    /* <![CDATA[ */
-    [%-
-        SET add_remove_button = 0;
-        IF rel_info.map_class;
-            SET m2m = 1;
-            IF buttons != 0;
-                SET add_remove_button = 1;
-            END;
-        ELSE;
-            SET m2m = 0;     
-        END;
-    -%]
-   
+      
     // populate global relatedMatrix object
     var [% method %]Opts = 
     {
@@ -35,35 +64,23 @@
         fields:         [% datatable.col_names.as_json %],
         panel_width:    '[% c.config.panel.width  || '730px' %]',
         panel_height:   '[% c.config.panel.height || '300px' %]',
-        pagerId:        '[% method %]Pager',
+        pagerId:        '[% foreign.name %]Pager',
         pk:             [% datatable.pk.as_json %],
         sortBy:         '[% datatable.sort_by %]',
-        info_url:       '[% base_url %]',
-        panel_url:      '[% base_url %]/yui_datatable?',
-        parent:         '[% method %]',
-        parent_url:     '[% c.uri_for(oid) %]',
-        parent_oid:     '[% oid %]',
-        url:            '[% c.uri_for(oid, 'yui_related_datatable', method) %]?_m2m=[% m2m %]&_add_rm_button=[% add_remove_button %]',
-        editable:       [% buttons != 0 ? '1' : '0' %],
-        row_url_method: '[% rel_info.controller.can_write(c) ? 'edit' : 'view' %]',
-        rm_m2m_url:     '[% c.uri_for( oid, method ) %]/',
-        count_url:      '[% base_url %]/yui_datatable_count?_page_size=50',  // small page size
-        no_follow:      [% rel_info.controller.can_read(c) ? 0 : 1 %],
-        anchor:         '[% method %]Matrix',
-        cmap:           [% rel_info.cmap.list('each').as_json || '0' %],
+        foreign:        [% foreign.as_json %],
+        parent:         [% parent.as_json %],
         pageSize:       15,
-        totalPages:     [% object.has_related_pages(method, 15) %],
-        totalResults:   [% object.has_related(method) %],
-        divId:          "[% method %]Id",
-        anchor:         "[% method %]",
-        name:           "[% method | ucfirst %]",
-        add_remove_button: [% add_remove_button %],
-        map_to:         '[% map_to %]',
-        m2m:            [% m2m %]
+        totalPages:     [% object.has_related_pages(foreign.name, 15) %],
+        totalResults:   [% object.has_related(foreign.name) %],
+        divId:          "[% foreign.name %]Id",
+        anchor:         "[% foreign.name %]",
+        name:           "[% foreign.name | ucfirst %]",
+        hidePKColumns:  [% datatable.hide_pk_columns ? 'true' : 'false' %]
     };
    
     // define globally per page so add_row() can find it   
-    YAHOO.crud.relatedMatrix.[% method %]Matrix = YAHOO.crud.related_records_matrix( [% method %]Opts );
+    YAHOO.crud.relatedMatrix.[% method %]Matrix = 
+        YAHOO.crud.related_records_matrix( [% method %]Opts );
        
     /* ]]> */
   </script> 

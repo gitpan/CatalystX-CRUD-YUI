@@ -7,11 +7,21 @@
 # TODO some default JS validation would be nice here.
 
 # DEFAULT didn't work as expected here.
-UNLESS fields.size;
-    fields = { order = [], readonly = {} };
+UNLESS fields.defined;
+    SET fields = { order = [], readonly = {} };
 END;
 UNLESS fields.order.size;
     fields.order    = form.field_names_by_rank;
+END;
+UNLESS fields.readonly.size;
+    # common readonly field names for auto-timestamps.
+    # to avoid getting these set automatically,
+    # set them explicitly in fields.readonly
+    # in the .tt that PROCESSes this one
+    fields.readonly.ctime = 1;
+    fields.readonly.mtime = 1;
+    fields.readonly.created = 1;
+    fields.readonly.modified = 1;
 END;
 
 DEFAULT oid = object_id;
@@ -31,6 +41,14 @@ USE autoformat( all = 1 );  # for textarea readonly
 
         field = form.field( fname );
         
+        # make sure any serial (autoincrem) fields
+        # are skipped. This is a backwards compat fix
+        # since RDG used to generate a hidden serial
+        # field for autoincrem PKs
+        IF (field.class == 'serial' || field.isa('Rose::HTMLx::Form::Field::Serial'));
+            NEXT;
+        END;
+        
         # set DateTime format
         IF field.isa('Rose::HTML::Form::Field::DateTime');
             IF (field.internal_value.epoch.defined);
@@ -39,7 +57,7 @@ USE autoformat( all = 1 );  # for textarea readonly
         END;
 
         # read-only fields
-        IF (fields.readonly.exists( fname ));
+        IF (fields.readonly.defined( fname ));
             field.xhtml_label;
 
             "<span class='input'>";
@@ -82,11 +100,13 @@ USE autoformat( all = 1 );  # for textarea readonly
                     fname  = fname,
                     param  = u.1,
                     limit  = field.limit,
-                    cache_size = 50
+                    cache_size = 50,
+                    csize  = field.size || 0,
             };
             # if searching, we do not have an object yet.
             IF (object);
-                input.value  = form.metadata.foreign_field_value( fname, object );
+                input.value  = field.internal_value || 
+                    form.metadata.foreign_field_value( fname, object );
             END;
             PROCESS crud/autocomplete_field.tt;
             "<br />\n";
@@ -123,7 +143,6 @@ USE autoformat( all = 1 );  # for textarea readonly
 %]
 
 [% BLOCK related_field_info %]
-[%# in theory this is never called in edit mode if form.interrelate_fields is used %]
 [%
  IF (     object
       &&  form.metadata.show_related_fields 
@@ -131,16 +150,33 @@ USE autoformat( all = 1 );  # for textarea readonly
       &&  form.metadata.is_related_field( fname ) 
       &&  !c.controller.primary_key.grep( "^$fname$" ).size
     );
-  related       = form.metadata.related_field( fname );
-  foreign_field = form.metadata.show_related_field_using( related.foreign_class, fname );
-  foreign_key   = related.foreign_column;
-  method        = related.method;
-  myurl         = c.uri_for( related.controller.action_for('search'), { $foreign_key = field.internal_value });
+  SET rel_info      = form.metadata.related_field( fname );
+  CALL rel_info.get_controller;
+  SET foreign_field = form.metadata.show_related_field_using( rel_info.foreign_class, fname );  
+  SET foreign_key   = rel_info.foreign_column_for(fname);
+  SET method        = rel_info.method;
+  
+  # default search since may be null or o2m
+  SET myurl         = c.uri_for( rel_info.controller.action_for('search'), { $foreign_key = field.internal_value } );
 
   IF (foreign_field);
     # show related record value literally
-    myval = object.$method.$foreign_field;
-    "&nbsp;<a class='box' href='$myurl'>$myval</a>";
+    myval           = object.$method.$foreign_field;
+    myval_uri_safe  = myval | uri;
+    
+    SET base_foreign_url = c.uri_for('/' _ rel_info.controller.path_prefix);
+    
+    # change to link directly to foreign object
+    # must check if controller isa REST controller as URI format is different
+    IF (rel_info.controller.isa('CatalystX::CRUD::REST'));
+        myurl = base_foreign_url _ '/' _ myval_uri_safe;
+    ELSE;
+        myurl = base_foreign_url _ '/' _ myval_uri_safe _ '/' _ rel_info.controller.can_write(c) ? 'edit' : 'view';
+    END;
+    
+    IF myval.length;
+        "&nbsp;<a class='box' href='$myurl'>$myval</a>";
+    END;
   ELSE;
      # show link to related record
     "&nbsp;<a class='box' href='$myurl'>Related record</a>";

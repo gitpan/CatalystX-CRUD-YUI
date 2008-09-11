@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui ));
 
-our $VERSION = '0.003';
+our $VERSION = '0.004';
 
 =head1 NAME
 
@@ -76,8 +76,8 @@ B<Required>
 
 =item
 
-I<parent_object> is the originating RDBO object, in the case where you are serializing
-related objects.
+I<parent_object> is the originating object, in the case 
+where you are serializing related objects.
 
 =item
 
@@ -312,7 +312,7 @@ sponsored the development of this software.
 =head1 COPYRIGHT & LICENSE
 
 Copyright 2008 by the Regents of the University of Minnesota.
-All Rights Reserved.
+
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

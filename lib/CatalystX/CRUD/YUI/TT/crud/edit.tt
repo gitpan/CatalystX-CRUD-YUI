@@ -37,15 +37,17 @@
  
   [% IF form_links.size %]
    <div class="links">
-    <ul>
     [% FOR item = form_links %]
      [% IF item.iframe %]
-     <li><a href="#" onclick="open_in_panel('[% item.href %]'); return false">[% item.text %]</a></li>
+     <a href="#" onclick="open_in_panel('[% item.href %]'); return false">[% item.text %]</a>
+     [% ELSIF item.http == 'POST' %]
+     <form class="inline" method="post" 
+          action="[% item.href %]"
+          ><button class="box">[% item.text %]</button></form>
      [% ELSE %]
-     <li><a href="[% item.href %]">[% item.text %]</a></li>
+     <a href="[% item.href %]">[% item.text %]</a>
      [% END %]
     [% END %]
-    </ul>
    </div>
   [% END %]
    

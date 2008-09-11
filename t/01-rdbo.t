@@ -15,9 +15,9 @@ SKIP: {
     if ($@) {
         skip "Rose::DBx::Object::MoreHelpers required to test MyRDBO app", 13;
     }
-    eval "use CatalystX::CRUD::Model::RDBO '0.13'";
-    if ($@) {
-        skip "CatalystX::CRUD::Model::RDBO 0.13 required to test MyRDBO app",
+    eval "use CatalystX::CRUD::Model::RDBO";
+    if ($@ or $CatalystX::CRUD::Model::RDBO::VERSION < 0.14) {
+        skip "CatalystX::CRUD::Model::RDBO 0.14 required to test MyRDBO app",
             13;
     }
 
@@ -30,6 +30,8 @@ SKIP: {
     use HTTP::Request::Common;
     use Data::Dump qw( dump );
     use JSON::XS;
+    
+    #dump MyRDBO::Controller::CRUD::Test::Foo->config;
 
     ok( get('/crud/test/foo'), "get /crud/test/foo" );
 
@@ -65,7 +67,7 @@ SKIP: {
             page     => 1,
             pageSize => 50,
             records  => [
-                { id => 1, name => "blue" }, { id => 2, name => "orange" }
+                { id => 2, name => "orange" }, { id => 1, name => "blue" }
             ],
             recordsReturned => 2,
             rowsPerPage     => 50,

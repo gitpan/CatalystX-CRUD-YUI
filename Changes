@@ -13,7 +13,19 @@ Revision history for CatalystX-CRUD-YUI
         * lots of fixes to support the change in RHTMLO where
           autoincrement fields are no longer in $form
 
-
-
-
+0.004   11 Sept 2008
+        * added configure option to hide PK columns in DataTable
+        * support core API changes to param names
+        * add fuzzy_search() and hide_pk_columns() config opts in
+          Controller
+        * flesh out Controller docs
+        * add end() RenderView method in Controller based on
+          cxc-fmt req param
+        * switch to Module::Install
+        * add TabView to set of core YUI components and switch
+          relationships to using them.
+        * View will now default to generic edit/view/list/search
+          if no specific action .tt file exists
+        * add generic view.tt and tweek form.tt to set certain
+          common field names as readonly (ctime mtime created modified)
 

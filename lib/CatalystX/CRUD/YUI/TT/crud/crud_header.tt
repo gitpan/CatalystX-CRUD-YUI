@@ -1,0 +1,15 @@
+<!-- local js -->
+  <script type="text/javascript">
+    /* <![CDATA[ */
+        // must come before crud.js is loaded
+        YAHOO.namespace('crud');
+        YAHOO.crud.OK2LOG = [% c.config.js_debug ? '1' : '0' %];
+    /* ]]> */
+  </script>
+
+  <script type="text/javascript" src="[% static_url %]/js/crud.js"></script>
+  <script type="text/javascript" src="[% static_url %]/js/json.js"></script>
+  
+<!-- CRUD style -->
+  <link rel="stylesheet" type="text/css" media="all" href="[% static_url %]/css/crud.css" />
+

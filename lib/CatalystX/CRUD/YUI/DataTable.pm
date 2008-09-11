@@ -10,7 +10,7 @@ use JSON::XS ();
 use Scalar::Util qw( blessed );
 use CatalystX::CRUD::YUI::Serializer;
 
-our $VERSION = '0.003';
+our $VERSION = '0.004';
 
 __PACKAGE__->mk_accessors(
     qw( yui results controller form
@@ -18,6 +18,7 @@ __PACKAGE__->mk_accessors(
         col_filter col_names url count counter
         field_names sort_by show_remove_button
         serializer_class serializer
+        hide_pk_columns
         )
 );
 
@@ -143,22 +144,21 @@ sub _init {
         or croak "controller required";
     my $form = $self->{form} or croak "form required";
 
+    my $app = $form->app || $form->app_class;
+    if ( !$app ) {
+
+        #carp dump $form;
+        croak "cannot get app from form->app or form->app_class";
+    }
+
+    $self->{hide_pk_columns} = $controller->hide_pk_columns;
+
     # may be undef. this is the method we call on the the parent object,
     # where parent $results isa RDBO and we are creating a datatable out
     # of its related objects.
     my $method_name = $self->{method_name};
 
     my @col_names = @{ $self->{col_names} || $form->metadata->field_methods };
-
-    if (    $results->isa('CatalystX::CRUD::Results')
-        and defined $form->app
-        and !$form->app->stash->{object} )
-    {
-
-        # no parent, so do not include columns that require it.
-        #my $takes_object = $form->metadata->takes_object_as_argument;
-        #@col_names = grep { !exists $takes_object->{$_} } @col_names;
-    }
 
     $self->pk(
         ref $controller->primary_key
@@ -168,7 +168,6 @@ sub _init {
     $self->columns( [] );
     $self->show_related_values( {} );
     $self->col_filter( [] );
-    $self->col_names( \@col_names );
     $self->sort_by( $form->metadata->default_sort_by || $self->pk->[0] );
 
     #carp "col_names for $results: " . dump $self->col_names;
@@ -181,7 +180,7 @@ sub _init {
         && defined $results->query )
     {
         $self->url(
-            $form->app->uri_for(
+            $app->uri_for(
                 $controller->action_for('yui_datatable'),
                 $results->query->{plain_query} || {}
             )
@@ -197,7 +196,7 @@ sub _init {
                 "method_name required for CatalystX::CRUD::Object datatable";
         }
         $self->url(
-            $form->app->uri_for(
+            $app->uri_for(
                 $controller->action_for(
                     $results->primary_key_uri_escaped,
                     'yui_related_datatable',
@@ -209,12 +208,24 @@ sub _init {
 
     $self->{url} .= '?' unless $self->{url} =~ m/\?/;
 
+    my @filtered_col_names;
+
     for my $field_name (@col_names) {
 
-        # we include PKs specially at the end
-        if ( grep { $_ eq $field_name } @{ $self->{pk} } ) {
+        # we include PKs specially at the end.
+        # exclude them here if they are single-col
+        # (since those are often autoincrem)
+        # but we turn on the 'hide' flag so that even
+        # though they are rendered, they are invisible to user
+        if ( @{ $self->{pk} } == 1
+            and $self->{pk}->[0] eq $field_name )
+        {
+            $self->{hide_pk_columns} = 1
+                unless defined $self->{hide_pk_columns};
             next;
         }
+
+        push( @filtered_col_names, $field_name );
 
         my $isa_field = $form->field($field_name);
 
@@ -232,9 +243,8 @@ sub _init {
                 : JSON::XS::false(),
 
                 # per-column click
-                url => $form->app->uri_for(
-                    $form->metadata->field_uri($field_name)
-                ),
+                url =>
+                    $app->uri_for( $form->metadata->field_uri($field_name) ),
 
             }
         );
@@ -266,16 +276,23 @@ sub _init {
         {   key => $pk_name,
 
             # must force label object to stringify
-            label => ( $form->metadata->labels->{$pk_name} || $pk_name ),
+            label => (
+                $form->metadata->labels->{$pk_name}
+                    || join( ' ',
+                    map { ucfirst($_) } split( m/\_/, $pk_name ) )
+            ),
 
-            sortable => JSON::XS::true(),
+            sortable => $pk_name =~ m/;;/
+            ? JSON::XS::false()
+            : JSON::XS::true(),
 
             # per-column click
-            url =>
-                $form->app->uri_for( $form->metadata->field_uri($pk_name) ),
+            url => $app->uri_for( $form->metadata->field_uri($pk_name) ),
         }
     );
-    push( @{ $self->{col_names} }, $pk_name );
+    push( @filtered_col_names, $pk_name );
+
+    $self->col_names( \@filtered_col_names );
 
     return $self;
 
@@ -333,7 +350,7 @@ sponsored the development of this software.
 =head1 COPYRIGHT & LICENSE
 
 Copyright 2008 by the Regents of the University of Minnesota.
-All Rights Reserved.
+
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

@@ -7,7 +7,7 @@ use Data::Dump qw( dump );
 use Template::Stash;
 use JSON::XS;
 
-our $VERSION = '0.003';
+our $VERSION = '0.004';
 
 # package object
 my $JSON = JSON::XS->new;
@@ -21,6 +21,12 @@ $JSON->allow_blessed(1);
 sub Math::BigInt::TO_JSON {
     my ($self) = @_;
     return $self . '';
+}
+
+# same with URI objets
+sub URI::TO_JSON {
+    my ($uri) = @_;
+    return $uri . '';
 }
 
 =head1 NAME
@@ -153,7 +159,7 @@ sponsored the development of this software.
 =head1 COPYRIGHT & LICENSE
 
 Copyright 2008 by the Regents of the University of Minnesota.
-All Rights Reserved.
+
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

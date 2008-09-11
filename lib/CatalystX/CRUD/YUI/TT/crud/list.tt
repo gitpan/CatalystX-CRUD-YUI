@@ -3,12 +3,14 @@
   
  [% IF results.count != 0 %]
   [% UNLESS c.action.name == 'count'; # TODO fix this a better way. %]
-  <div class="xls_link"><a class="box" href="[% c.req.uri_with({ as_xls = 1, _no_page = 1 }) %]"
+  <div class="xls_link"><a class="box" 
+  href="[% c.req.uri_with({ 'cxc-fmt' = 'xls', _no_page = 1 }) %]"
     >Export as Excel</a></div>
   [% END %]
   [% PROCESS crud/results.tt %]
  [% ELSIF results.plain_query_str %]
-  <div>Sorry, no results for <strong>[% results.plain_query_str %]</strong>.</div>
+  <div>Sorry, no results for 
+  <strong>[% results.plain_query_str %]</strong>.</div>
  [% ELSE %]
   <div>Sorry, no records.</div>
  [% END %]

@@ -10,8 +10,9 @@
   <link rel="shortcut icon" href="[% static_url %]/favicon.ico" type="image/x-icon" />
               
 
-  [% PROCESS crud/yui_header.tt %]
-  [% PROCESS crud/page_head_maker.tt %]
+  [% PROCESS crud/yui_header.tt         %]
+  [% PROCESS crud/crud_header.tt        %]
+  [% PROCESS crud/page_head_maker.tt    %]
 
   
   <script type="text/javascript">

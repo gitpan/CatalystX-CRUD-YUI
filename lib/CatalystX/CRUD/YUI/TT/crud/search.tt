@@ -19,7 +19,9 @@
     <label><!-- satisfy css --></label>
     <input class="button" type="submit" name="search" value="Search" />
     <input class="button" type="reset" value="Reset" />
+    [% IF c.controller.fuzzy_search -%]
     <input type="hidden"  value="1" name="_fuzzy" />
+    [% END %]
     <br/>
     
   </fieldset>
@@ -27,7 +29,10 @@
  
  [% IF results.count %]
   <div class="xls_link"><a href="[% c.req.uri_with(
-            { _fuzzy = 1, as_xls = 1, _no_page = 1 }
+            { 'cxc-fuzzy'   => c.controller.fuzzy_search, 
+              'cxc-fmt'     => 'xls', 
+              'cxc-no_page' => 1 
+            }
             ) %]">Export as Excel</a></div>
   [% PROCESS crud/results.tt %]
  [% ELSIF results.query.plain_query_str %]

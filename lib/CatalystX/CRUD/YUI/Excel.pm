@@ -10,7 +10,7 @@ use Class::Inspector;
 use CatalystX::CRUD::YUI;
 use CatalystX::CRUD::YUI::TT;
 
-our $VERSION = '0.003';
+our $VERSION = '0.004';
 
 =head1 NAME
 
@@ -126,7 +126,7 @@ sponsored the development of this software.
 =head1 COPYRIGHT & LICENSE
 
 Copyright 2008 by the Regents of the University of Minnesota.
-All Rights Reserved.
+
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

@@ -1,7 +1,9 @@
 [%# generate JS for YUI datatable widget. %]
 [% IF (!datatable.defined);
     SET datatable = yui.datatable(
-         'results' => results, 'controller' => c.controller(), 'form' => form 
+         'results'      => results, 
+         'controller'   => c.controller(), 
+         'form'         => form,
     ); 
    END;
 %]
@@ -29,19 +31,21 @@
         window.location.href = newurl;
     };
     var matrixOpts[% datatable.counter %] = {
-        colDefs: [% datatable.columns.as_json %],
+        colDefs:        [% datatable.columns.as_json %],
         [% IF datatable.col_filter.size %]colFilter: [% datatable.col_filter.as_json %],[% END %]
-        pageSize: [% results.pager.entries_per_page || c.controller.page_size || '50' %],
-        pagerId: 'pager[% datatable.counter %]',  // TODO refactor to make pager id config
-        sortBy: '[% datatable.sort_by %]',
-        pk: [% datatable.pk.as_json %],
-        totalPages: [% results.pager.last_page %],
-        totalResults: [% results.count %],
-        anchor: "matrix[% datatable.counter %]",
-        url: "[% datatable.url %]",
-        divId: "results_matrix[% datatable.counter %]",
+        pageSize:       [% results.pager.entries_per_page || c.controller.page_size || '50' %],
+        pagerId:        'pager[% datatable.counter %]',  // TODO refactor to make pager id config
+        sortBy:         '[% datatable.sort_by %]',
+        pk:             [% datatable.pk.as_json %],
+        totalPages:     [% results.pager.last_page %],
+        totalResults:   [% results.count %],
+        anchor:         "matrix[% datatable.counter %]",
+        parent:         { datatable: "[% datatable.url %]" },
+        foreign:        {}, // need this even if empty
+        divId:          "results_matrix[% datatable.counter %]",
         rowClickHandler: clickHandler[% datatable.counter %],
-        fields: [% datatable.col_names.as_json %]
+        fields:         [% datatable.col_names.as_json %],
+        hidePKColumns:  [% datatable.hide_pk_columns ? 'true' : 'false' %]
     };
     
     var myMatrix[% datatable.counter %] = 

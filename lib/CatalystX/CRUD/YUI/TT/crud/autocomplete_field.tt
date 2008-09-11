@@ -7,8 +7,10 @@
 #   url
 #   csize (optional - defaults to 30)
 #   value (optional)
+#
+# TODO catch user return key so as not to submit on selection
 %]
-[% input.label %]
+[% input.label.replace('(for=".+?")','$1 class="autocomplete"'); %]
 <div id="autocomplete_wrapper_[% input.id %]" class="autocomplete_wrapper">
  <input type="hidden" id="[% input.fname %]" name="[% input.fname %]" 
         value="[% input.hidden_value || input.value %]" />
@@ -17,7 +19,7 @@
        name="[% input.name || input.id %]" 
        size="[% input.csize || '30' %]"
        type="text" 
-       class="varchar"
+       class="varchar text"
        value="[% input.value %]"
        tabindex="[% input.tabindex %]"
        [% FOR k = input.keys.grep('^on\w+$') %]
@@ -29,7 +31,7 @@
 <style type="text/css">
  #[% input.id %] { 
     position:static;
-    width:[% input.csize || '30' %]em; 
+    width:[% input.csize || '30' %]em; [%# 'em' is not exactly right but neither is px %]
  }
  #[% input.id %]_auto_complete { 
     text-align:left;

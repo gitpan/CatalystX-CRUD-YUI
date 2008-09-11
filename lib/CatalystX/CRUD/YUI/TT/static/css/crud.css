@@ -117,8 +117,7 @@ body
     background-color: #7a0019;
 }
 
-#quicksearch input[type=text],
-.autocomplete
+#quicksearch input[type=text]
 {
     font-family: Monaco, 'Andale Mono', fixed, monospace;
     padding: 2px;
@@ -159,7 +158,7 @@ a.box:hover,
 .crud a:hover,
 button.box:hover
 {
-    background-color: #ffcc33;
+    background-color: #ffdd77;
     cursor:pointer;
 }
 
@@ -332,9 +331,17 @@ form.crud div.autocomplete_wrapper
     margin-top:5px;
 }
 
+/* mac ff likes this */
+form.crud label.autocomplete {
+    margin-top:9px;
+}
+
 /* FF seems to like this, on mac anyway */
 form.crud input.varchar,
+form.crud input.char,
 form.crud input.integer,
+form.crud input.bigint,
+form.crud input.int,
 form.crud input.datetime,
 form.crud input.date,
 form.crud span.input.varchar
@@ -499,6 +506,18 @@ form.crud textarea
     padding: 2px;
 }
 
+/* buttons that look like links */
+form.inline {
+    display:inline;
+    margin: 0;
+    padding:0;
+}
+
+form.inline button {
+    font-size: 12px;
+}
+
+
 /* YUI datatable overrides */
 .yui-skin-sam .yui-dt-table caption {
     /* padding-bottom:1em; */
@@ -610,7 +629,7 @@ div.links a {
 }
 
 div.links a:hover {
-    background-color: #ffcc33;
+    background-color: #ffdd77;
 }
 
 div.links li {
@@ -690,7 +709,7 @@ div.links li {
 .yui-skin-sam a.yui-pg-last.hover,
 .yui-skin-sam a.yui-pg-last:hover
 {
-    background-color: #ffcc33;
+    background-color: #ffdd77;
     color: #7a0019;
     border: 1px solid #7a0019;
 }
@@ -731,7 +750,7 @@ div.links li {
 .yui-skin-sam .yui-dt th div:hover
 {
     color: #7A0019;
-    background-color: #ffcc33;
+    background-color: #ffdd77;
 }
 
 /* popup panels */
@@ -741,7 +760,7 @@ div.links li {
 {
     background: #7a0019;
     text-align:center;
-    border: 1px solid #ffcc33;
+    border: 1px solid #ffdd77;
     color: #fff;
     font-size: 110%;
 }
@@ -770,7 +789,7 @@ div.links li {
 .yui-skin-sam th.yui-dt-highlighted,
 .yui-skin-sam th.yui-dt-highlighted a {
     /* background-color:#B2D2FF; */ /* med blue hover */
-    background-color: #ffcc33;
+    background-color: #ffdd77;
     color: #7a0019;
     cursor:pointer;
 }
@@ -781,7 +800,7 @@ div.links li {
 .yui-skin-sam tr.yui-dt-odd td.yui-dt-highlighted {
     cursor:pointer;
     /* background-color:#B2D2FF; */ /* med blue hover */
-    background-color: #ffcc33;
+    background-color: #ffdd77;
     color: #7a0019;
 }
 
@@ -798,12 +817,18 @@ div.links li {
 }
 
 /* fix OSX gecko bug per http://developer.yahoo.com/yui/container/ */
-.yui-panel-container.hide-scrollbars * div.yui-layout-bd {
+.yui-panel-container.hide-scrollbars #addListPanel .yui-dt-bd,
+.yui-panel-container.hide-scrollbars #links_panel_container .yui-dt-bd,
+.yui-panel-container.hide-scrollbars #daily_schedule_panel .yui-dt-bd
+{
     /* Hide scrollbars by default for Gecko on OS X */
     overflow: hidden;
 }
 
-.yui-panel-container.show-scrollbars * div.yui-layout-bd {
+.yui-panel-container.show-scrollbars #addListPanel .yui-dt-bd,
+.yui-panel-container.show-scrollbars #links_panel_container .yui-dt-bd,
+.yui-panel-container.show-scrollbars #daily_schedule_panel .yui-dt-bd
+{
     /* Show scrollbars for Gecko on OS X when the Panel is visible  */
     overflow: auto;
 }
@@ -815,4 +840,91 @@ form.crud div.pager_wrapper select,
     float: none;
     margin: 0;
     padding: 0;
+}
+
+
+/* tabview */
+
+/* .yui-navset defaults to .yui-navset-top */
+.yui-skin-sam .yui-navset .yui-nav,
+.yui-skin-sam .yui-navset .yui-navset-top .yui-nav { /* protect nested tabviews from other orientations */
+    border:solid #7A0019; /* color between tab list and content */
+    border-width:0 0 5px;
+    Xposition:relative;
+    zoom:1;
+}
+
+.yui-skin-sam .yui-navset .yui-nav li,
+.yui-skin-sam .yui-navset .yui-navset-top .yui-nav li {
+    margin:0 0.16em 0 0; /* space between tabs */
+    padding:1px 0 0; /* gecko: make room for overflow */
+    zoom:1;
+}
+
+.yui-skin-sam .yui-navset .yui-nav .selected,
+.yui-skin-sam .yui-navset .yui-navset-top .yui-nav .selected { 
+    margin:0 0.16em -1px 0; /* for overlap */
+}
+
+.yui-skin-sam .yui-navset .yui-nav a,
+.yui-skin-sam .yui-navset .yui-navset-top .yui-nav a {
+    /*
+    background:#d8d8d8 url(../../../../assets/skins/sam/sprite.png) repeat-x;
+    */
+    background: #ffffff;
+    border:solid #7A0019;
+    border-width:0 1px;
+    color:#000;
+    text-decoration:none;
+}
+
+.yui-skin-sam .yui-navset .yui-nav a em,
+.yui-skin-sam .yui-navset .yui-navset-top .yui-nav a em {
+    border:solid #7A0019;
+    border-width:1px 0 0;
+    cursor:hand;
+    padding:0.25em .75em;
+    left:0; right: 0; bottom: 0; /* protect from other orientations */
+    top:-1px; /* for 1px rounded corners */
+    position:relative;
+}
+
+.yui-skin-sam .yui-navset .yui-nav .selected a,
+.yui-skin-sam .yui-navset .yui-nav .selected a:focus, /* no focus effect for selected */
+.yui-skin-sam .yui-navset .yui-nav .selected a:hover { /* no hover effect for selected */
+    /* background:#2647a0 url(../../../../assets/skins/sam/sprite.png) repeat-x left -1400px; *//* selected tab background */
+    background: #ffdd77;
+    color:#7A0019;
+}
+
+.yui-skin-sam .yui-navset .yui-nav a:hover,
+.yui-skin-sam .yui-navset .yui-nav a:focus {
+    /* background:#bfdaff url(../../../../assets/skins/sam/sprite.png) repeat-x left -1300px; *//* selected tab background */
+    background: #ffdd77;
+    outline:0;
+}
+
+.yui-skin-sam .yui-navset .yui-nav .selected a em {
+    padding:0.35em 0.75em; /* raise selected tab */
+}
+
+.yui-skin-sam .yui-navset .yui-nav .selected a,
+.yui-skin-sam .yui-navset .yui-nav .selected a em {
+    border-color:#111111; /* selected tab border color */
+}
+
+.yui-skin-sam .yui-navset .yui-content {
+    background:#ffffff; /* content background color */
+}
+
+.yui-skin-sam .yui-navset .yui-content,
+.yui-skin-sam .yui-navset .yui-navset-top .yui-content {
+    border:1px solid #7A0019; /* content border */
+    border-top-color:#7A0019; /* different border color */
+    padding:1em; /* content padding */
+}
+
+#relTabs .yui-content {
+    height: 500px;  /* static height to try and reduce "jump" on clicking tab */
+    overflow: auto;
 }

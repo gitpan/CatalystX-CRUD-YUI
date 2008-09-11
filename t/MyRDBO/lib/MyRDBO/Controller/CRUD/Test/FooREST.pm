@@ -20,6 +20,9 @@ __PACKAGE__->config(
 
 sub chain_test : PathPart Chained('fetch') Args(0) {
     my ( $self, $c ) = @_;
+    
+    #Data::Dump::dump $self;
+    
     $c->log->debug("chain test") if $c->debug;
     $c->res->status(200);
     $c->res->body('chain_test worked');

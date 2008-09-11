@@ -10,8 +10,8 @@
     SET no_wrapper = 1;
     SET count = 0;
     FOR r = results;
-        SET pk = c.controller.make_primary_key_string(r);
-        dataset.push({ $ac_field => r.$ac_method, pk => $pk });
+        SET pk = r.primary_key_uri_escaped;
+        dataset.push({ $ac_field => r.$ac_method, 'pk' => "$pk" });
         count = count + 1;
     END;
     resultset = {
