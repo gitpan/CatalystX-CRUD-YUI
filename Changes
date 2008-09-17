@@ -29,3 +29,10 @@ Revision history for CatalystX-CRUD-YUI
         * add generic view.tt and tweek form.tt to set certain
           common field names as readonly (ctime mtime created modified)
 
+0.005   16 Sept 2008
+        * add missing generic crud/count.tt file to flesh out API support
+        * fix bug in form.tt with generating url for related foreign object.
+        * fix bug in form.tt to allow related_value map to use non-unique column
+        * add calendar popup feature to Date and DateTime field types
+        * add missing POD to TT and Serializer
+

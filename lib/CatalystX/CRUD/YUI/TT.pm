@@ -7,7 +7,7 @@ use Data::Dump qw( dump );
 use Template::Stash;
 use JSON::XS;
 
-our $VERSION = '0.004';
+our $VERSION = '0.005';
 
 # package object
 my $JSON = JSON::XS->new;
@@ -35,11 +35,21 @@ CatalystX::CRUD::YUI::TT - templates for your CatalystX::CRUD view
 
 =head1 SYNOPSIS
 
- # TODO
+ use CatalystX::CRUD::YUI::TT;
+ 
+ # in a template
+ [% foo.as_json %]
+ [% foo.dump_data %]
+ [% foo.dump_stderr %]
+ [% SET foo = 1;
+    foo.increment;   # foo == 2
+    foo.decrement;   # foo == 1
+ %]
 
 =head1 DESCRIPTION
 
- # TODO
+CatalystX::CRUD::YUI::TT adds some convenience virtual methods
+to the Template::Stash namespace.
 
 =head1 VIRTUAL METHODS
 

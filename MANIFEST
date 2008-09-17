@@ -17,6 +17,7 @@ lib/CatalystX/CRUD/YUI/TT/crud.pm
 lib/CatalystX/CRUD/YUI/TT/crud/add_row_panel.tt
 lib/CatalystX/CRUD/YUI/TT/crud/autocomplete.tt
 lib/CatalystX/CRUD/YUI/TT/crud/autocomplete_field.tt
+lib/CatalystX/CRUD/YUI/TT/crud/count.tt
 lib/CatalystX/CRUD/YUI/TT/crud/crud_buttons.tt
 lib/CatalystX/CRUD/YUI/TT/crud/crud_header.tt
 lib/CatalystX/CRUD/YUI/TT/crud/default.tt

@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui ));
 
-our $VERSION = '0.004';
+our $VERSION = '0.005';
 
 =head1 NAME
 
@@ -19,11 +19,24 @@ CatalystX::CRUD::YUI::Serializer - flatten CatalystX::CRUD::Object instances
 
 =head1 SYNOPSIS
 
- # TODO
+ use CatalystX::CRUD::YUI::Serializer;
+ 
+ my $serializer = CatalystX::CRUD::YUI::Serializer->new(
+                    datetime_format => '%Y-%m-%d %H:%M:%S'
+                    );
+                    
+ my $hashref = $serializer->serialize_object( 
+                    object      => $my_object,
+                    col_names   => [qw( id name email )],  
+                    cat_context => $c,
+                    rel_info    => $rel_info,
+                );
+ 
 
 =head1 DESCRIPTION
 
- # TODO
+CatalystX::CRUD::YUI::Serializer turns objects into hashrefs,
+typically for rendering as JSON.
  
 =head1 METHODS
 
@@ -67,7 +80,8 @@ I<object> is the CRUD object to be serialized. B<Required>
 
 =item
 
-I<rel_info> is the struct returned by Form->metadata->relationship_info() method.
+I<rel_info> is a
+Rose::HTMLx::Form::Related::RelInfo object.
 
 =item
 
@@ -86,7 +100,7 @@ I<cat_context> is a $c object.
 =item
 
 I<show_related_values> is a hash ref of methods and foreign fields,
-as defined by B<I<TODO>>.
+as defined by Rose::HTMLx::Form::Related.
 
 =item
 

@@ -29,9 +29,24 @@ IF (oid);
     oid = c.controller.make_primary_key_string(object) || 0;
 END;
 
-USE autoformat( all = 1 );  # for textarea readonly 
+USE autoformat( all = 1 );  # for textarea readonly
 
 %]
+[% BLOCK datetime_popup %]
+[% SET id = field.id %]
+<span class="calendar_container" id="[% id %]_calendar_container"><img class='calendar'
+     src='[% YUIBaseURL %]/[% YUIVersion %]/examples/button/assets/calendar_icon.gif'
+     onclick=YAHOO.crud.datetime_picker("[% id %]") />
+</span>
+[% END %]
+[% BLOCK date_popup %]
+[% SET id = field.id %]
+<span class="calendar_container" id="[% id %]_calendar_container">
+<img class='calendar'
+     src='[% YUIBaseURL %]/[% YUIVersion %]/examples/button/assets/calendar_icon.gif'
+     onclick=YAHOO.crud.date_picker("[% id %]") />
+</span>
+[% END %]
 
 [% IF (error || form.error) %]
 <div class="error">[% error || form.error %]</div>
@@ -57,6 +72,7 @@ USE autoformat( all = 1 );  # for textarea readonly
         END;
 
         # read-only fields
+        # check these first as this is not a field attribute
         IF (fields.readonly.defined( fname ));
             field.xhtml_label;
 
@@ -128,7 +144,19 @@ USE autoformat( all = 1 );  # for textarea readonly
                 field.xhtml;
             END;
                   
-                               
+        # Dates and DateTimes get a popup calendar
+        ELSIF field.isa('Rose::HTML::Form::Field::DateTime');
+            field.xhtml_label;
+            field.xhtml;
+            PROCESS datetime_popup;
+            "<br />\n";
+            
+        ELSIF field.isa('Rose::HTML::Form::Field::Date');
+            field.xhtml_label;
+            field.xhtml;
+            PROCESS date_popup;
+            "<br />\n";
+            
         # default
         ELSE;
                         
@@ -161,8 +189,8 @@ USE autoformat( all = 1 );  # for textarea readonly
 
   IF (foreign_field);
     # show related record value literally
-    myval           = object.$method.$foreign_field;
-    myval_uri_safe  = myval | uri;
+    SET viewable_value  = object.$method.$foreign_field;
+    SET myval_uri_safe  = field.internal_value | uri;
     
     SET base_foreign_url = c.uri_for('/' _ rel_info.controller.path_prefix);
     
@@ -171,11 +199,11 @@ USE autoformat( all = 1 );  # for textarea readonly
     IF (rel_info.controller.isa('CatalystX::CRUD::REST'));
         myurl = base_foreign_url _ '/' _ myval_uri_safe;
     ELSE;
-        myurl = base_foreign_url _ '/' _ myval_uri_safe _ '/' _ rel_info.controller.can_write(c) ? 'edit' : 'view';
+        myurl = base_foreign_url _ '/' _ myval_uri_safe _ '/' _ (rel_info.controller.can_write(c) ? 'edit' : 'view');
     END;
     
-    IF myval.length;
-        "&nbsp;<a class='box' href='$myurl'>$myval</a>";
+    IF viewable_value.length;
+        "&nbsp;<a class='box' href='$myurl'>$viewable_value</a>";
     END;
   ELSE;
      # show link to related record
