@@ -1,4 +1,8 @@
-  <!-- YUI support -->
+[%-
+    DEFAULT YUIBaseURL  = 'http://yui.yahooapis.com';
+    DEFAULT YUIVersion  = '2.5.2';
+-%]
+      <!-- YUI support -->
   <!-- reset css -->
   <link rel="stylesheet" type="text/css" 
         href="[% YUIBaseURL %]/[% YUIVersion %]/build/reset-fonts-grids/reset-fonts-grids.css" />

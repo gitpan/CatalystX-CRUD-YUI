@@ -21,6 +21,12 @@ SKIP: {
             13;
     }
 
+    #check for sqlite3 cmd line tool
+    my @sqlite_version = `sqlite3 -version`;
+    if (!@sqlite_version) {
+        skip "sqlite3 cmd line tool not found", 13;
+    }
+
     use lib 't/MyRDBO/lib';
 
     # require to defer till skip checks

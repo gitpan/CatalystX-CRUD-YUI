@@ -16,6 +16,12 @@ SKIP: {
         skip "install DBIx::Class::RDBOHelpers to test MyDBIC app", 9;
     }
 
+    #check for sqlite3 cmd line tool
+    my @sqlite_version = `sqlite3 -version`;
+    if (!@sqlite_version) {
+        skip "sqlite3 cmd line tool not found", 13;
+    }
+
     use lib 't/MyDBIC/lib';
 
     # require to defer till skip checks

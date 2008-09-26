@@ -1,24 +1,24 @@
----
-abstract: 'YUI for your CatalystX::CRUD view'
-author:
-  - 'Peter Karman, C<< <karman@cpan.org> >>'
+--- 
+abstract: YUI for your CatalystX::CRUD view
+author: 
+  - Peter Karman, C<< <karman@cpan.org> >>
 distribution_type: module
-generated_by: 'Module::Install version 0.77'
+generated_by: Module::Install version 0.68
 license: perl
-meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
+meta-spec: 
+  url: http://module-build.sourceforge.net/META-spec-v1.3.html
+  version: 1.3
 name: CatalystX-CRUD-YUI
-no_index:
-  directory:
+no_index: 
+  directory: 
     - inc
     - t
-recommends:
+recommends: 
   CatalystX::CRUD::Model::RDBO: 0.14
   CatalystX::CRUD::ModelAdapter::DBIC: 0.06
   DBIx::Class::RDBOHelpers: 0.05
   Rose::DBx::Object::MoreHelpers: 0.02
-requires:
+requires: 
   Catalyst::View::TT: 0
   CatalystX::CRUD: 0.3
   CatalystX::CRUD::Controller::RHTMLO: 0.17
@@ -31,6 +31,4 @@ requires:
   Template: 0
   Test::More: 0
   Text::Autoformat: 0
-resources:
-  license: http://dev.perl.org/licenses/
-version: 0.005
+version: 0.004

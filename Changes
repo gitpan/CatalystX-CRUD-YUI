@@ -36,3 +36,10 @@ Revision history for CatalystX-CRUD-YUI
         * add calendar popup feature to Date and DateTime field types
         * add missing POD to TT and Serializer
 
+0.006   xxx
+        * clarify debugging statement in Controller->end
+        * allow for per-session prefs
+        * make tab label different than viewable label
+        * pass tabindex to autocomplete field maker
+        * bump default yui version and set default var types if not using tt_config.tt
+

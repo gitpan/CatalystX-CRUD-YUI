@@ -14,7 +14,7 @@
         'url'           => base_url,
         'panel'         => base_url _ '/yui_datatable?',
         'column_map'    => rel_info.cmap.list('each') || 0,
-        'method'        => rel_info.controller.can_write(c) ? 'edit' : 'view',
+        'method'        => (c.session.prefs.default_crud_action || (rel_info.controller.can_write(c) ? 'edit' : 'view')),
         'name'          => method,
         'view_perm'     => rel_info.controller.can_read(c) ? 0 : 1,
         'rm_button'     => 0,

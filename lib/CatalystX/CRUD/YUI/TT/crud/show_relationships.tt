@@ -83,12 +83,13 @@ FOREACH rel IN form.metadata.relationships;
         rel_info.label = old_info.label;
     END;
     
+    SET tabLabel  = method;
     SET thisLabel = rel_info.label || method;
     
     # create the tab structure
     Tabs.push({ 
         label => thisLabel,
-        id    => thisLabel _ 'Tab',
+        id    => tabLabel _ 'Tab',
     });
     
     # in case we have not yet initialized the controller instance
@@ -127,7 +128,7 @@ FOREACH rel IN form.metadata.relationships;
     USE export_as_xls_url = url(base_url _ "/search", map_params);
     export_as_xls_url     = export_as_xls_url _ '&amp;cxc-fmt=xls&amp;cxc-no_page=1';
 %]
- <div class="x-tab" title="[% thisLabel %]" id="[% thisLabel %]Tab" >
+ <div class="x-tab" title="[% thisLabel %]" id="[% tabLabel %]Tab" >
   <form class="crud">[%# use <form> just to abuse css %]
    <fieldset>
    <legend>[% object.has_related( method ) _ " related records for " _ thisLabel %]</legend>

@@ -27,7 +27,7 @@
         var newurl      = '[% c.uri_for("/" _ datatable.controller.action_namespace) %]/' + 
                             pk + 
                             '/' + 
-                            '[% datatable.controller.can_write(c) ? 'edit' : 'view' %]';
+                            '[% (c.session.prefs.default_crud_action || (datatable.controller.can_write(c) ? 'edit' : 'view')) %]';
         window.location.href = newurl;
     };
     var matrixOpts[% datatable.counter %] = {

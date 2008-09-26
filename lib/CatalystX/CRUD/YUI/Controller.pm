@@ -28,7 +28,7 @@ __PACKAGE__->config(
     },
 );
 
-our $VERSION = '0.005';
+our $VERSION = '0.006';
 
 =head1 NAME
 
@@ -548,8 +548,8 @@ sub autocomplete : Local {
 
 Uses the RenderView ActionClass.
 
-Prior to passing to view, sets C<current_view> based
-on the C<cxc-fmt> request parameter, defaulting
+Prior to passing to view, sets C<current_view> if it is not set,
+based on the C<cxc-fmt> request parameter, defaulting
 to 'YUI'.
 
 B<NOTE:>This assumes you have a View class called
@@ -602,7 +602,9 @@ sub end : ActionClass('RenderView') {
             }
         }
 
-        $c->log->debug("view set to $view_class") if $c->debug;
+        $c->log->debug("view_class = $view_class") if $c->debug;
+        $c->log->debug( "view set to " . $c->stash->{current_view} )
+            if $c->debug;
     }
 }
 

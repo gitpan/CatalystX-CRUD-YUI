@@ -1,6 +1,6 @@
 [% # global vars, settings, etc.
     DateTimeFormat  = '%Y-%m-%d %H:%M:%S';
     YUIBaseURL      = 'http://yui.yahooapis.com';
-    YUIVersion      = '2.5.1';
+    YUIVersion      = '2.5.2';
 %]
 

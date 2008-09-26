@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui ));
 
-our $VERSION = '0.005';
+our $VERSION = '0.006';
 
 =head1 NAME
 
