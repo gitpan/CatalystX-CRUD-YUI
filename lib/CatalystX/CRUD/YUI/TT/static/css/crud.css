@@ -153,6 +153,22 @@ button.box
     border: 1px solid #7A0019;
 }
 
+.button {
+    background-color: #fff;
+    color: #7a0019;
+    font-size: 105%;
+    padding: 4px;
+    border: 1px outset #7a0019;
+}
+
+.button:hover {
+    color: #111;
+    background-color: #ffdd77;
+    cursor: pointer;
+    border: 1px inset #7a0019;
+}
+
+
 #main a:hover,
 a.box:hover,
 .crud a:hover,
@@ -652,6 +668,7 @@ div.links li {
 .yui-skin-sam .results.pager_wrapper
 {
     margin-left: 0;
+    width: none;    /* override 100% to make it fit nicely */
 }
 
 /* .yui-skin-sam .panel.pager_wrapper
@@ -926,7 +943,7 @@ form.crud div.pager_wrapper select,
 }
 
 #relTabs .yui-content {
-    height: 500px;  /* static height to try and reduce "jump" on clicking tab */
+    height: auto;  /* static height inevitably creates scroll within a scroll */
     overflow: auto;
 }
 

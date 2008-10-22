@@ -68,6 +68,7 @@ CALL yui.show_remove_button(buttons);
 [%
 # TODO since we use tabs, only load datatables when they are selected
 SET Tabs = [];
+SET activeTab = 0;
 FOREACH rel IN form.metadata.relationships;
 
     NEXT IF rel.type == 'foreign key';
@@ -83,13 +84,21 @@ FOREACH rel IN form.metadata.relationships;
         rel_info.label = old_info.label;
     END;
     
+    activeTab = activeTab + 1;
     SET tabLabel  = method;
     SET thisLabel = rel_info.label || method;
+    SET thisTabActive = 0;
+    IF (!form.metadata.default_selected && activeTab == 1);
+        thisTabActive = 1;
+    ELSIF (form.metadata.default_selected == tabLabel);
+        thisTabActive = 1;
+    END;
     
     # create the tab structure
     Tabs.push({ 
-        label => thisLabel,
-        id    => tabLabel _ 'Tab',
+        label   => thisLabel,
+        id      => tabLabel _ 'Tab',
+        active  => thisTabActive,
     });
     
     # in case we have not yet initialized the controller instance
@@ -177,7 +186,7 @@ FOREACH rel IN form.metadata.relationships;
             var tab = new YAHOO.widget.Tab( 
                     {   label: t.label,
                         contentEl: YAHOO.util.Dom.get(t.id),
-                        active: i == 0 ? true : false,
+                        active: t.active,
                         href: '#' + t.id
                     }
                 );

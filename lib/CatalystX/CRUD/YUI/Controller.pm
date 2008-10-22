@@ -28,7 +28,7 @@ __PACKAGE__->config(
     },
 );
 
-our $VERSION = '0.006';
+our $VERSION = '0.007';
 
 =head1 NAME
 
@@ -603,7 +603,7 @@ sub end : ActionClass('RenderView') {
         }
 
         $c->log->debug("view_class = $view_class") if $c->debug;
-        $c->log->debug( "view set to " . $c->stash->{current_view} )
+        $c->log->debug( "current_view set to " . $c->stash->{current_view} )
             if $c->debug;
     }
 }

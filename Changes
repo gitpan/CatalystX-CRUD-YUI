@@ -36,10 +36,20 @@ Revision history for CatalystX-CRUD-YUI
         * add calendar popup feature to Date and DateTime field types
         * add missing POD to TT and Serializer
 
-0.006   xxx
+0.006   26 Sept 2008
         * clarify debugging statement in Controller->end
         * allow for per-session prefs
         * make tab label different than viewable label
         * pass tabindex to autocomplete field maker
         * bump default yui version and set default var types if not using tt_config.tt
+
+0.007   21 Oct 2008
+        * fix a couple legacy params from _no_page to cxc-no_page
+        * add .button css 
+        * add error tagset to end of autocomplete input 
+        * revert to 2.5.1 of YUI lib till bugs using 2.5.2 are identified
+        * move most of ::TT into Template::Plugin::Handy
+        * remove static height on tabbed relationship container css 
+        * add support for form.metadata.default_selected to Tabs in show_relationships.tt
+        * allow for explicit sort direction in initial datatable sort
 

@@ -2,32 +2,9 @@ package CatalystX::CRUD::YUI::TT;
 
 use warnings;
 use strict;
-use Carp;
-use Data::Dump qw( dump );
-use Template::Stash;
-use JSON::XS;
+use Template::Plugin::Handy 'install';
 
-our $VERSION = '0.006';
-
-# package object
-my $JSON = JSON::XS->new;
-
-#$JSON->pretty(1);    # helps with debugging
-$JSON->convert_blessed(1);
-$JSON->allow_blessed(1);
-
-# mysql serial fields are rendered with Math::BigInt objects in RDBO.
-# monkeypatch per JSON::XS docs
-sub Math::BigInt::TO_JSON {
-    my ($self) = @_;
-    return $self . '';
-}
-
-# same with URI objets
-sub URI::TO_JSON {
-    my ($uri) = @_;
-    return $uri . '';
-}
+our $VERSION = '0.007';
 
 =head1 NAME
 
@@ -51,100 +28,9 @@ CatalystX::CRUD::YUI::TT - templates for your CatalystX::CRUD view
 CatalystX::CRUD::YUI::TT adds some convenience virtual methods
 to the Template::Stash namespace.
 
-=head1 VIRTUAL METHODS
-
-The following TT virtual methods are added automatically for use in your
-template files:
+As of version 0.007 this is just a wrapper around Template::Plugin::Handy.
 
 =cut
-
-=head2 dump_data
-
-Replacement for the Dumper plugin. You can call this method on any variable
-to see its Data::Dump representation in HTML-safe manner.
-
- [% myvar.dump_data %]
- 
-=cut
-
-# virt method replacements for Dumper plugin
-sub dump_data {
-    my $s = shift;
-    my $d = dump($s);
-    $d =~ s/&/&amp;/g;
-    $d =~ s/</&lt;/g;
-    $d =~ s/>/&gt;/g;
-    $d =~ s,\n,<br/>\n,g;
-    return "<pre>$d</pre>";
-}
-
-=head2 dump_stderr
-
-Like dump_data but prints to STDERR instead of returning HTML-escaped string.
-Returns undef.
-
-=cut
-
-sub dump_stderr {
-    my $s = shift;
-    print STDERR dump($s);
-    return;
-}
-
-=head2 as_json
-
-Encode the variable as a JSON string. Wrapper around the JSON->encode method.
-The string will be encoded as UTF-8, and the special JSON flags for converted_blessed
-and allow_blessed are C<true> by default.
-
-=cut
-
-sub as_json {
-    my $v = shift;
-    my $j = $JSON->encode($v);
-    return $j;
-}
-
-=head2 increment( I<n> )
-
-Increment a scalar number by one.
-Aliased as a scalar vmethod as 'inc'.
-
-=cut
-
-sub increment {
-    $_[0]++;
-    return;
-}
-
-=head2 decrement( I<n> )
-
-Decrement a scalar number by one.
-Aliased as a scalar vmethod as 'dec'.
-
-=cut
-
-sub decrement {
-    $_[0]--;
-    return;
-}
-
-# dump_data virt method instead of Dumper plugin
-$Template::Stash::HASH_OPS->{dump_data}   = \&dump_data;
-$Template::Stash::LIST_OPS->{dump_data}   = \&dump_data;
-$Template::Stash::SCALAR_OPS->{dump_data} = \&dump_data;
-
-$Template::Stash::HASH_OPS->{dump_stderr}   = \&dump_stderr;
-$Template::Stash::LIST_OPS->{dump_stderr}   = \&dump_stderr;
-$Template::Stash::SCALAR_OPS->{dump_stderr} = \&dump_stderr;
-
-# as_json virt method dumps value as a JSON string
-$Template::Stash::HASH_OPS->{as_json}   = \&as_json;
-$Template::Stash::LIST_OPS->{as_json}   = \&as_json;
-$Template::Stash::SCALAR_OPS->{as_json} = \&as_json;
-
-$Template::Stash::SCALAR_OPS->{inc} = \&increment;
-$Template::Stash::SCALAR_OPS->{dec} = \&decrement;
 
 1;
 

@@ -15,17 +15,18 @@ requires 'Catalyst::View::TT'                    => 0;
 requires 'Catalyst::Plugin::Static::Simple'      => 0;
 requires 'Catalyst::Plugin::ConfigLoader'        => 0;
 requires 'Catalyst::Action::RenderView'          => 0;
-requires 'CatalystX::CRUD'                       => 0.30;
+requires 'CatalystX::CRUD'                       => 0.32;
 recommends 'CatalystX::CRUD::Model::RDBO'        => 0.14;
-recommends 'CatalystX::CRUD::ModelAdapter::DBIC' => 0.06;
-recommends 'Rose::DBx::Object::MoreHelpers'      => 0.02;
-recommends 'DBIx::Class::RDBOHelpers'            => 0.05;
-requires 'Rose::HTMLx::Form::Related'            => 0.07;
-requires 'CatalystX::CRUD::Controller::RHTMLO'   => 0.17;  # could be only recommends?
-requires 'CatalystX::CRUD::View::Excel'          => 0.05;
+recommends 'CatalystX::CRUD::ModelAdapter::DBIC' => 0.07;
+recommends 'Rose::DBx::Object::MoreHelpers'      => 0.03;
+recommends 'DBIx::Class::RDBOHelpers'            => 0.07;
+requires 'Rose::HTMLx::Form::Related'            => 0.09;
+requires 'CatalystX::CRUD::Controller::RHTMLO'   => 0.18; 
+requires 'CatalystX::CRUD::View::Excel'          => 0.06;
 requires 'Scalar::Util'                          => 0;
 requires 'Class::C3'                             => 0;
-requires 'JSON::XS'                              => 2.0;
+requires 'JSON::XS'                              => 2.23;
+requires 'Template::Plugin::Handy'               => 0;
 
 WriteAll;
 

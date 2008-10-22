@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui ));
 
-our $VERSION = '0.006';
+our $VERSION = '0.007';
 
 =head1 NAME
 
@@ -258,9 +258,9 @@ sub serialize_datatable {
         or croak "no results in DataTable object";
     my $method_name = $datatable->method_name || '';
     my $max_loops
-        = $datatable->form->app->req->params->{_no_page}
+        = $datatable->form->app->req->params->{'cxc-no_page'}
         ? 0
-        : (    $datatable->form->app->req->params->{_page_size}
+        : (    $datatable->form->app->req->params->{'cxc-page_size'}
             || $datatable->controller->page_size );
 
     my $counter = 0;

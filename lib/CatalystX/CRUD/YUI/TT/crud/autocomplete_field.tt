@@ -25,7 +25,7 @@
        [% FOR k = input.keys.grep('^on\w+$') %]
        [% k %]="[% input.item(k) %]"
        [% END %]
-       />
+       />&nbsp;<span class="error" id="[% input.id %]_error"></span>
  <div class="auto_complete" id="[% input.id %]_auto_complete"></div>
 </div>
 <style type="text/css">
