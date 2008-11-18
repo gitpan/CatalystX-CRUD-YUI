@@ -1,9 +1,8 @@
-<!-- local js -->
+ <!-- local js -->
   <script type="text/javascript">
     /* <![CDATA[ */
         // must come before crud.js is loaded
-        YAHOO.namespace('crud');
-        YAHOO.crud.OK2LOG = [% c.config.js_debug ? '1' : '0' %];
+        OK2LOG = [% c.debug ? '1' : '0' %];
     /* ]]> */
   </script>
 
@@ -13,3 +12,14 @@
 <!-- CRUD style -->
   <link rel="stylesheet" type="text/css" media="all" href="[% static_url %]/css/crud.css" />
 
+  <style type="text/css"><!-- livegrid button icons -->
+    .add, {
+        background-image:url([% static_url %]/icons/add.gif) !important;
+    }
+    .add-button, .plus-button {
+        background-image:url([% static_url %]/icons/add.gif) !important;
+    }
+    .remove {
+        background-image:url([% static_url %]/icons/delete.gif) !important;
+    }
+  </style>

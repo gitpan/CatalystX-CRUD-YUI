@@ -1,6 +1,10 @@
 [% # global vars, settings, etc.
     DateTimeFormat  = '%Y-%m-%d %H:%M:%S';
     YUIBaseURL      = 'http://yui.yahooapis.com';
-    YUIVersion      = '2.5.1';   # TODO check with 2.6.x and 2.5.2
+    YUIVersion      = '2.6.0';
+    ExtBaseURL      = 'http://static.msi.umn.edu/extjs';
+    ExtVersion      = '2.2';
+    LGBaseURL       = 'http://static.msi.umn.edu/livegrid';
+    LGVersion       = 'trunk';
 %]
 

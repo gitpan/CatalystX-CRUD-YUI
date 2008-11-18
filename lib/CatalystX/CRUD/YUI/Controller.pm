@@ -28,7 +28,7 @@ __PACKAGE__->config(
     },
 );
 
-our $VERSION = '0.007';
+our $VERSION = '0.008';
 
 =head1 NAME
 
@@ -66,6 +66,9 @@ CatalystX::CRUD::YUI::Controller - base controller
 This is a base controller class for use with CatalystX::CRUD::YUI
 applications. It implements URI and internal methods that the
 accompanying .tt and .js files rely upon.
+
+B<NOTE: As of version 0.008 this class drops support for the YUI
+datatable feature and instead supports the ExtJS LiveGrid feature.>
 
 =head1 CONFIGURATION
 
@@ -151,28 +154,6 @@ Returns JSON MIME type. Default is 'application/json; charset=utf-8'.
 
 sub json_mime {'application/json; charset=utf-8'}
 
-=head2 auto
-
-Fix up some YUI parameter names and stash the form object.
-See the Catalyst documentation for other special features of the auto()
-Private method.
-
-=cut
-
-sub auto : Private {
-    my ( $self, $c, @arg ) = @_;
-
-    # in YUI > 2.5.0 the paginator uses non-sql-friendly sort dir values
-    for my $param_name (qw( cxc-dir _dir )) {
-        if ( exists $c->req->params->{$param_name} ) {
-            $c->req->params->{$param_name} =~ s/yui\-dt\-//;
-            last;
-        }
-    }
-
-    $self->next::method( $c, @arg );
-}
-
 =head2 default
 
 Redirects to URI for 'count' in same namespace.
@@ -184,53 +165,88 @@ sub default : Path {
     $c->response->redirect( $c->uri_for('count') );
 }
 
-# YUI DataTable support
-
 =head2 yui_datatable( I<context>, I<arg> )
 
-Public URI method. Like calling search() but returns JSON
-in format the YUI DataTable expects.
+Deprecated. Use livegrid() instead.
 
 =cut
 
 sub yui_datatable : Local {
     my ( $self, $c, @arg ) = @_;
+    $c->res->status(404);
+    $c->res->body('yui_datatable is deprecated');
+    return;
+}
+
+=head2 livegrid( I<context>, I<arg> )
+
+Public URI method. Returns JSON for ExtJS LiveGrid feature.
+
+=cut
+
+sub livegrid : Local {
+    my ( $self, $c, @arg ) = @_;
+
+    # param name compat with cxc api
+    # TODO configurable names in livegrid js?
+    my $params = $c->req->params;
+    $params->{'cxc-dir'}       = $params->{dir};
+    $params->{'cxc-sort'}      = $params->{sort};
+    $params->{'cxc-page_size'} = $params->{limit};
+    $params->{'cxc-offset'}    = $params->{start};
+
     $c->stash( view_on_single_result => 0 );
     $self->do_search( $c, @arg );
-    $c->stash( template => 'crud/yui_datatable.tt' );
+    $c->stash( template => 'crud/livegrid.tt' );
     $c->response->content_type( $self->json_mime );
 }
 
 =head2 yui_datatable_count( I<context>, I<arg> )
 
-Public URI method. Like calling count() but returns JSON
-in format the YUI DataTable expects.
+Deprecated. Use livegrid methods instead.
 
 =cut
 
 sub yui_datatable_count : Local {
     my ( $self, $c, @arg ) = @_;
-    $c->stash(
-        fetch_no_results      => 1,
-        view_on_single_result => 0,
-    );
-    $self->do_search( $c, @arg );
-    $c->stash( template => 'crud/yui_datatable_count.tt' );
-    $c->response->content_type( $self->json_mime );
+    $c->res->status(404);
+    $c->res->body('yui_datatable is deprecated');
+    return;
 }
 
 =head2 yui_related_datatable( I<oid>, I<relationship_name> )
 
-Public URI method. Returns JSON like yui_datatable but for the records
-referred to by I<relationship_name>.
+Deprecated. Use livegrid_related instead.
 
 =cut
 
 sub yui_related_datatable : PathPart Chained('fetch') Args(1) {
     my ( $self, $c, $rel_name ) = @_;
+    $c->res->status(404);
+    $c->res->body('yui_datatable is deprecated');
+    return;
+}
+
+=head2 livegrid_related( I<oid>, I<relationship_name> )
+
+Public URI method. Returns JSON for ExtJS LiveGrid feature.
+
+=cut
+
+sub livegrid_related : PathPart Chained('fetch') Args(1) {
+    my ( $self, $c, $rel_name ) = @_;
+
+    # param name compat with cxc api
+    # TODO configurable names in livegrid js?
+    my $params = $c->req->params;
+    $params->{'cxc-dir'}       = $params->{dir};
+    $params->{'cxc-sort'}      = $params->{sort};
+    $params->{'cxc-page_size'} = $params->{limit};
+    $params->{'cxc-offset'}    = $params->{start};
+
     $c->stash( view_on_single_result => 0 );
     $self->do_related_search( $c, $rel_name );
-    $c->stash( template => 'crud/yui_datatable.tt' );
+    $c->stash( template => 'crud/livegrid.tt' );
     $c->response->content_type( $self->json_mime );
 }
 

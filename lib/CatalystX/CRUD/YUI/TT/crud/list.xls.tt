@@ -4,7 +4,7 @@
     DEFAULT form       = controller.form(c);
     DEFAULT method_name = 0;
     SET field_names    = xls.field_names || c.req.params.item('_field_names') || form.field_names;
-    DEFAULT datatable  = yui.datatable(
+    DEFAULT livegrid  = yui.livegrid(
                 form        => form, 
                 results     => results,
                 controller  => controller,
@@ -20,7 +20,7 @@
                     field_names => field_names, 
                     parent      => results, 
                     c           => c,
-                    show_related_values => datatable.show_related_values,
+                    show_related_values => livegrid.show_related_values,
                     method_name => method_name,
             );
         '<cell>'; hashref.item(f) | html; '</cell>';
@@ -33,7 +33,7 @@
     <worksheet name="[% controller.model_name.replace('\\W+','_') %]">
       <row>
      [% FOR fn = field_names %]
-     [% label = datatable.column(fn).label 
+     [% label = livegrid.column(fn).label 
                 || form.field(fn).label 
                 || form.metadata.labels.$fn 
                 || fn %]

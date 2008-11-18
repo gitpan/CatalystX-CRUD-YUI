@@ -1,36 +1,32 @@
 [% 
-    IF (!rel_info.defined);
-        THROW crud '"rel_info" must be defined in ' _ component.name;
-    END;
-    IF (!datatable.defined);
-        THROW crud '"datatable" must be defined in ' _ component.name;
+    IF (!r.defined);
+        THROW crud '"r" must be defined in ' _ component.name;
     END;
     
-    DEFAULT method = rel_info.method;
-
-    SET base_url = c.uri_for('/' _ datatable.controller.path_prefix);
+    SET base_url = c.uri_for('/' _ r.datatable.controller.path_prefix);
     
     SET foreign = {
         'url'           => base_url,
         'panel'         => base_url _ '/yui_datatable?',
-        'column_map'    => rel_info.cmap.list('each') || 0,
-        'method'        => (c.session.prefs.default_crud_action || (rel_info.controller.can_write(c) ? 'edit' : 'view')),
-        'name'          => method,
-        'view_perm'     => rel_info.controller.can_read(c) ? 0 : 1,
+        'column_map'    => r.rel_info.cmap.list('each') || 0,
+        'method'        => (c.session.prefs.default_crud_action 
+                            || (rel_info.controller.can_write(c) ? 'edit' : 'view')),
+        'name'          => r.method,
+        'view_perm'     => r.rel_info.controller.can_read(c) ? 0 : 1,
         'rm_button'     => 0,
         'm2m'           => 0,
     };
     
     # controller can define extra query params to limit the returned dataset
     IF (rel_info.controller.can('yui_datatable_filter'));
-        SET extra_params = rel_info.controller.yui_datatable_filter(c, object, rel_info);
+        SET extra_params = r.rel_info.controller.yui_datatable_filter(c, object, r.rel_info);
         foreign.panel = foreign.panel _ extra_params;
     END;
     
     # UI controls
-    IF rel_info.map_class;
+    IF r.rel_info.map_class;
         SET foreign.m2m = 1;
-        IF buttons != 0;
+        IF EDITMODE != 0;
             SET foreign.rm_button = 1;
         END;
     END;
@@ -39,7 +35,7 @@
         'column_map'    => [], 
         'url'           => c.uri_for(oid),
         'oid'           => oid,
-        'datatable'     => c.uri_for(oid, 'yui_related_datatable', method, 
+        'datatable'     => c.uri_for(oid, 'yui_related_datatable', r.method, 
                                 {   'cxc-m2m'           => foreign.m2m, 
                                     'cxc-add_rm_button' => foreign.rm_button
                                 }),
@@ -47,7 +43,7 @@
         'count'         => c.uri_for('yui_datatable_count',
                                 {  'cxc-page_size' => 15  }),
     };
-    FOR col_name = rel_info.cmap.keys;
+    FOR col_name = r.rel_info.cmap.keys;
         parent.column_map.push( col_name );
         parent.column_map.push( object.$col_name );
     END;    
@@ -57,16 +53,16 @@
    /* <![CDATA[ */
       
     // populate global relatedMatrix object
-    var [% method %]Opts = 
+    var [% r.method %]Opts = 
     {
-        colDefs:        [% datatable.columns.as_json %],
-        colFilter:      [% datatable.col_filter.as_json %],
-        fields:         [% datatable.col_names.as_json %],
+        colDefs:        [% r.datatable.columns.as_json %],
+        colFilter:      [% r.datatable.col_filter.as_json %],
+        fields:         [% r.datatable.col_names.as_json %],
         panel_width:    '[% c.config.panel.width  || '730px' %]',
         panel_height:   '[% c.config.panel.height || '300px' %]',
         pagerId:        '[% foreign.name %]Pager',
-        pk:             [% datatable.pk.as_json %],
-        sortBy:         '[% datatable.sort_by %]',
+        pk:             [% r.datatable.pk.as_json %],
+        sortBy:         '[% r.datatable.sort_by %]',
         foreign:        [% foreign.as_json %],
         parent:         [% parent.as_json %],
         pageSize:       15,
@@ -75,12 +71,12 @@
         divId:          "[% foreign.name %]Id",
         anchor:         "[% foreign.name %]",
         name:           "[% foreign.name | ucfirst %]",
-        hidePKColumns:  [% datatable.hide_pk_columns ? 'true' : 'false' %]
+        hidePKColumns:  [% r.datatable.hide_pk_columns ? 'true' : 'false' %]
     };
    
     // define globally per page so add_row() can find it   
-    YAHOO.crud.relatedMatrix.[% method %]Matrix = 
-        YAHOO.crud.related_records_matrix( [% method %]Opts );
+    YAHOO.crud.relatedMatrix.[% r.method %]Matrix = 
+        YAHOO.crud.related_records_matrix( [% r.method %]Opts );
        
     /* ]]> */
   </script> 

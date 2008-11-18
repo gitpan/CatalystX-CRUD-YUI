@@ -3,15 +3,16 @@ package CatalystX::CRUD::YUI;
 use warnings;
 use strict;
 use Carp;
-use CatalystX::CRUD::YUI::DataTable;
+use CatalystX::CRUD::YUI::LiveGrid;
 use CatalystX::CRUD::YUI::Serializer;
 use base qw( Class::Accessor::Fast );
 use Class::C3;
 use Data::Dump qw( dump );
 
-__PACKAGE__->mk_accessors(qw( datatable_class serializer_class ));
+__PACKAGE__->mk_accessors(
+    qw( serializer_class livegrid_class ));
 
-our $VERSION = '0.007';
+our $VERSION = '0.008';
 
 =head1 NAME
 
@@ -33,7 +34,7 @@ CatalystX::CRUD::YUI - YUI for your CatalystX::CRUD view
 =head1 DESCRIPTION
 
 CatalystX::CRUD::YUI is a crud application using the Yahoo
-User Interface toolkit and CatalystX::CRUD components. It is
+User Interface and ExtJS toolkits, and CatalystX::CRUD components. It is
 derived largely from the Rose::DBx::Garden::Catalyst project
 but now with support for DBIx::Class via the 
 CatalystX::CRUD::ModelAdapter::DBIC package.
@@ -55,15 +56,15 @@ Only new or overridden method are documented here.
 
 sub new {
     my $self = shift->next::method(@_);
-    $self->{datatable_class}  ||= 'CatalystX::CRUD::YUI::DataTable';
     $self->{serializer_class} ||= 'CatalystX::CRUD::YUI::Serializer';
+    $self->{livegrid_class}   ||= 'CatalystX::CRUD::YUI::LiveGrid';
     return $self;
 }
 
-=head2 datatable( I<opts> )
+=head2 livegrid( I<opts> )
 
-Returns a CatalystX::CRUD::YUI::DataTable object
-ready for the yui_datatable.tt template.
+Returns a CatalystX::CRUD::YUI::LiveGrid object
+ready for the livegrid_*.tt templates.
 
 I<opts> should consist of:
 
@@ -112,9 +113,9 @@ sub _fix_args {
     return @arg;
 }
 
-sub datatable {
+sub livegrid {
     my $self = shift;
-    return $self->datatable_class->new( _fix_args(@_), yui => $self );
+    return $self->livegrid_class->new( _fix_args(@_), yui => $self );
 }
 
 =head2 serializer

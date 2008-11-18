@@ -13,6 +13,8 @@
         END;
     END;
 
-    PROCESS crud/edit.tt buttons = 0;
+    SET CRUD_MODE  = 'view';
+    SET EDITMODE = 0;
+    PROCESS crud/edit.tt;
    
 %]

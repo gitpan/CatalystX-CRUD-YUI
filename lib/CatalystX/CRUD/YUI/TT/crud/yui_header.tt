@@ -1,47 +1,112 @@
-[%-
-    DEFAULT YUIBaseURL  = 'http://yui.yahooapis.com';
-    DEFAULT YUIVersion  = '2.5.2';
--%]
-      <!-- YUI support -->
-  <!-- reset css -->
-  <link rel="stylesheet" type="text/css" 
-        href="[% YUIBaseURL %]/[% YUIVersion %]/build/reset-fonts-grids/reset-fonts-grids.css" />
+[%- 
+    DEFAULT Y = {
+        url     => YUIBaseURL,
+        version => YUIVersion,
+        css     => [],
+        js      => [],
+    };
+    Y.css.push('build/reset-fonts-grids/reset-fonts-grids');
+    Y.css.push('build/assets/skins/sam/skin');
+    Y.css.push('build/autocomplete/assets/skins/sam/autocomplete');
+    #Y.css.push('build/resize/assets/skins/sam/resize');
+    #Y.css.push('build/button/assets/skins/sam/button');
+    #Y.css.push('build/treeview/assets/skins/sam/treeview');
+    #Y.css.push('build/tabview/assets/skins/sam/tabview');
+    Y.css.push('build/calendar/assets/skins/sam/calendar');
+    
+    Y.js.push('build/utilities/utilities');
+    Y.js.push('build/datasource/datasource-min');
+    Y.js.push('build/autocomplete/autocomplete-min');
+    Y.js.push('build/container/container-min');
+    Y.js.push('build/menu/menu-min');        
+    #Y.js.push('build/button/button-min');
+    Y.js.push('build/calendar/calendar-min');
+    #Y.js.push('build/paginator/paginator-min');
+    #Y.js.push('build/datatable/datatable-min');
+    Y.js.push('build/history/history-min');
+    Y.js.push('build/json/json-min');
+    #Y.js.push('build/resize/resize-min');
+    #Y.js.push('build/layout/layout-min');
+    #Y.js.push('build/tabview/tabview-min');
+    #Y.js.push('build/treeview/treeview-min');
+    
+  IF (!ExtJS.defined);
+    SET ExtJS = {
+        url     => ExtBaseURL,
+        version => ExtVersion,
+        css     => [],
+        js      => [],
+    };
+    
+    ExtJS.js.push('adapter/ext/ext-base');
+    ExtJS.js.push('ext-all');
 
-  <!-- Core + Skin CSS -->
-  <link rel="stylesheet" type="text/css" 
-        href="[% YUIBaseURL %]/[% YUIVersion %]/build/assets/skins/sam/skin.css" />
+    # column filters do not work well with m2m so
+    # they are disabled by default
+    IF USE_LIVEGRID_FILTERS;
+    ExtJS.js.push('source/widgets/menu/DateMenu');
+    ExtJS.js.push('examples/grid-filtering/menu/EditableItem');
+    ExtJS.js.push('examples/grid-filtering/menu/RangeMenu');
 
-  <link type="text/css" rel="stylesheet" 
-        href="[% YUIBaseURL %]/[% YUIVersion %]/build/calendar/assets/skins/sam/calendar.css" /> 
-
-  <link type="text/css" rel="stylesheet" 
-        href="[% YUIBaseURL %]/[% YUIVersion %]/build/button/assets/skins/sam/button.css" />
-        
-  <link type="text/css" rel="stylesheet" 
-        href="[% YUIBaseURL %]/[% YUIVersion %]/build/tabview/assets/skins/sam/tabview.css" /> 
-
-<!-- js -->
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/connection/connection-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/utilities/utilities.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/container/container-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/menu/menu-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/logger/logger-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/autocomplete/autocomplete-min.js"></script>
-
- <!-- important!! these next 4 must load in this exact order -->
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/datasource/datasource-beta-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/json/json-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/history/history-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/datatable/datatable-beta-min.js"></script>
-
-
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/dragdrop/dragdrop-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/calendar/calendar-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/resize/resize-beta-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/animation/animation-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/layout/layout-beta-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/button/button-min.js"></script>
-  <script type="text/javascript" src="[% YUIBaseURL %]/[% YUIVersion %]/build/tabview/tabview-min.js"></script>
+    ExtJS.js.push('examples/grid-filtering/grid/GridFilters');
+    ExtJS.js.push('examples/grid-filtering/grid/filter/Filter');
+    ExtJS.js.push('examples/grid-filtering/grid/filter/StringFilter');
+    ExtJS.js.push('examples/grid-filtering/grid/filter/DateFilter');
+    ExtJS.js.push('examples/grid-filtering/grid/filter/ListFilter');
+    ExtJS.js.push('examples/grid-filtering/grid/filter/NumericFilter');
+    ExtJS.js.push('examples/grid-filtering/grid/filter/BooleanFilter');
+    END;
+    
+    ExtJS.css.push('resources/css/ext-all');
+    #ExtJS.css.push('resources/css/xtheme-gray');
+  END;
   
-
+  IF (!LiveGrid.defined);
+    SET LiveGrid = {
+        url     => LGBaseURL,
+        version => LGVersion,
+        css     => [],
+        js      => [],
+    };
+    
+    LiveGrid.css.push('src/resources/css/ext-ux-livegrid');
+    LiveGrid.js.push('src/GridPanel');
+    LiveGrid.js.push('src/GridView');
+    LiveGrid.js.push('src/RowSelectionModel');
+    LiveGrid.js.push('src/Store');
+    LiveGrid.js.push('src/Toolbar');
+    LiveGrid.js.push('src/JsonReader');
+  END;
+    
+-%]
+[%- BLOCK css_file -%]
+  <link rel="stylesheet" type="text/css" href="[% url %]/[% version %]/[% css %].css" />
+[%- END -%]
+[%- BLOCK js_file -%]
+  <script type="text/javascript" src="[% url %]/[% version %]/[% js %].js"></script>
+[%- END -%]
+[%- FOREACH css IN Y.css.unique -%]
+    [% PROCESS css_file url = Y.url version = Y.version %]
+[% END -%]
+[%- FOREACH js IN Y.js.unique -%]
+    [% PROCESS js_file url = Y.url version = Y.version %]
+[% END -%]
+[%- FOREACH css IN ExtJS.css.unique -%]
+    [% PROCESS css_file url = ExtJS.url version = ExtJS.version %]
+[% END -%]
+[%- FOREACH js IN ExtJS.js.unique -%]
+    [% PROCESS js_file url = ExtJS.url version = ExtJS.version %]
+[% END -%]  
+[%- FOREACH css IN LiveGrid.css.unique -%]
+    [% PROCESS css_file url = LiveGrid.url version = LiveGrid.version %]
+[% END -%]
+[%- FOREACH js IN LiveGrid.js.unique -%]
+    [% PROCESS js_file url = LiveGrid.url version = LiveGrid.version %]
+[% END -%]
+[% IF USE_LIVEGRID_FILTERS %]
+<script type="text/javascript">
+/* <![CDATA[ */
+    USE_LIVEGRID_FILTERS = 1;
+/* ]]> */
+</script>
+[% END %]

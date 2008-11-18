@@ -16,14 +16,14 @@ SKIP: {
         skip "Rose::DBx::Object::MoreHelpers required to test MyRDBO app", 13;
     }
     eval "use CatalystX::CRUD::Model::RDBO";
-    if ($@ or $CatalystX::CRUD::Model::RDBO::VERSION < 0.14) {
+    if ( $@ or $CatalystX::CRUD::Model::RDBO::VERSION < 0.14 ) {
         skip "CatalystX::CRUD::Model::RDBO 0.14 required to test MyRDBO app",
             13;
     }
 
     #check for sqlite3 cmd line tool
     my @sqlite_version = `sqlite3 -version`;
-    if (!@sqlite_version) {
+    if ( !@sqlite_version ) {
         skip "sqlite3 cmd line tool not found", 13;
     }
 
@@ -36,7 +36,7 @@ SKIP: {
     use HTTP::Request::Common;
     use Data::Dump qw( dump );
     use JSON::XS;
-    
+
     #dump MyRDBO::Controller::CRUD::Test::Foo->config;
 
     ok( get('/crud/test/foo'), "get /crud/test/foo" );
@@ -57,7 +57,7 @@ SKIP: {
         "view foo 1 contains correct ctime"
     );
 
-    ok( $res = request('/crud/test/foo/1/yui_related_datatable/foogoos'),
+    ok( $res = request('/crud/test/foo/1/livegrid_related/foogoos'),
         "related table" );
 
     #dump $res;
@@ -68,17 +68,21 @@ SKIP: {
 
     is_deeply(
         $json,
-        {   dir      => "",
-            offset   => "",
-            page     => 1,
-            pageSize => 50,
-            records  => [
-                { id => 2, name => "orange" }, { id => 1, name => "blue" }
-            ],
-            recordsReturned => 2,
-            rowsPerPage     => 50,
-            "sort"          => "",
-            totalRecords    => 2,
+        {   response => {
+                value => {
+                    dir   => "",
+                    items => [
+                        { id => 2, name => "orange" },
+                        { id => 1, name => "blue" }
+                    ],
+                    limit       => 50,
+                    offset      => "",
+                    page        => 1,
+                    "sort"      => "",
+                    total_count => 2,
+                    version     => 1,
+                },
+            },
         },
         "json response"
     );

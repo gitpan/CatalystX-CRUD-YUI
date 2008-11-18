@@ -18,7 +18,7 @@ SKIP: {
 
     #check for sqlite3 cmd line tool
     my @sqlite_version = `sqlite3 -version`;
-    if (!@sqlite_version) {
+    if ( !@sqlite_version ) {
         skip "sqlite3 cmd line tool not found", 13;
     }
 
@@ -49,8 +49,8 @@ SKIP: {
         qr/1972-03-29 06:30:00/,
         "view foo 1 contains correct ctime"
     );
-    
-    ok( $res = request('/crud/test/foo/1/yui_related_datatable/foogoos'),
+
+    ok( $res = request('/crud/test/foo/1/livegrid_related/foogoos'),
         "related table" );
 
     #dump $res;
@@ -61,20 +61,23 @@ SKIP: {
 
     is_deeply(
         $json,
-        {   dir      => "",
-            offset   => "",
-            page     => 1,
-            pageSize => 50,
-            records  => [
-                { id => 1, name => "blue" }, { id => 2, name => "orange" }
-            ],
-            recordsReturned => 2,
-            rowsPerPage     => 50,
-            "sort"          => "",
-            totalRecords    => 2,
+        {   response => {
+                value => {
+                    dir   => "",
+                    items => [
+                        { id => 1, name => "blue" },
+                        { id => 2, name => "orange" },
+                    ],
+                    limit       => 50,
+                    offset      => "",
+                    page        => 1,
+                    "sort"      => "",
+                    total_count => 2,
+                    version     => 1,
+                },
+            },
         },
         "json response"
     );
-
 
 }

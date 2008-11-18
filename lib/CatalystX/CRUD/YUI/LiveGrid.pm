@@ -1,4 +1,4 @@
-package CatalystX::CRUD::YUI::DataTable;
+package CatalystX::CRUD::YUI::LiveGrid;
 
 use warnings;
 use strict;
@@ -10,25 +10,25 @@ use JSON::XS ();
 use Scalar::Util qw( blessed );
 use CatalystX::CRUD::YUI::Serializer;
 
-our $VERSION = '0.007';
+our $VERSION = '0.008';
 
 __PACKAGE__->mk_accessors(
     qw( yui results controller form
         method_name pk columns show_related_values
-        col_filter col_names url count counter
+        col_filter text_columns col_names url count counter
         field_names sort_by show_remove_button
         serializer_class serializer
-        hide_pk_columns
+        hide_pk_columns sort_dir title excel_url
         )
 );
 
 =head1 NAME
 
-CatalystX::CRUD::YUI::DataTable - YUI DataTable objects
+CatalystX::CRUD::YUI::LiveGrid - ExtJS LiveGrid objects
 
 =head1 SYNOPSIS
 
- my $datatable = $yui->datatable( 
+ my $livegrid = $yui->livegrid( 
             results     => $results,    # CX::CRUD::Results or CX::CRUD::Object
             controller  => $controller, 
             form        => $form,
@@ -36,9 +36,17 @@ CatalystX::CRUD::YUI::DataTable - YUI DataTable objects
             col_names   => $form->metadata->field_methods,
  );
   
- $datatable->serialize;  # returns serialized results
- $datatable->count;      # returns number of rows
- 
+ $livegrid->serialize;  # returns serialized results
+ $livegrid->count;      # returns number of rows
+
+=head1 DESCRIPTION
+
+This is a subclass of CatalystX::CRUD::YUI::DataTable for use
+with the ExtJS-base LiveGrid component http://www.siteartwork.de/livegrid/.
+
+Only deviations from the CatalystX::CRUD::YUI::DataTable docs
+are described here.
+
 =head1 METHODS
 
 =head2 new( I<opts> )
@@ -102,7 +110,8 @@ A hashref of foreign key information.
 
 =item col_filter
 
-An arrayref of column names.  # TODO used for??
+An arrayref of column names. Used for filtering table by specific column
+values.
 
 =item col_names
 
@@ -181,7 +190,7 @@ sub _init {
     {
         $self->url(
             $app->uri_for(
-                $controller->action_for('yui_datatable'),
+                $controller->action_for('livegrid'),
                 $results->query->{plain_query} || {}
             )
         );
@@ -198,8 +207,7 @@ sub _init {
         $self->url(
             $app->uri_for(
                 $controller->action_for(
-                    $results->primary_key_uri_escaped,
-                    'yui_related_datatable',
+                    $results->primary_key_uri_escaped, 'livegrid_related',
                     $method_name,
                 )
             )
@@ -228,74 +236,109 @@ sub _init {
         push( @filtered_col_names, $field_name );
 
         my $isa_field = $form->field($field_name);
+        my $col_def   = {
+            key => $field_name,
+
+            # must force label object to stringify
+            label => defined($isa_field)
+            ? $isa_field->label . ''
+            : ( $form->metadata->labels->{$field_name} || $field_name ),
+
+            sortable => $isa_field
+            ? JSON::XS::true()
+            : JSON::XS::false(),
+
+            type => $isa_field
+            ? $self->_get_col_type( $isa_field->class )
+            : 'string',
+
+            # per-column click
+            url => $app->uri_for( $form->metadata->field_uri($field_name) ),
+
+        };
+        push( @{ $self->{columns} }, $col_def );
 
         push(
-            @{ $self->{columns} },
-            {   key => $field_name,
-
-                # must force label object to stringify
-                label => defined($isa_field)
-                ? $isa_field->label . ''
-                : ( $form->metadata->labels->{$field_name} || $field_name ),
-
-                sortable => $isa_field
-                ? JSON::XS::true()
-                : JSON::XS::false(),
-
-                # per-column click
-                url =>
-                    $app->uri_for( $form->metadata->field_uri($field_name) ),
-
-            }
+            @{ $self->{col_filter} },
+            { dataIndex => $col_def->{key}, type => $col_def->{type} }
         );
 
         if (    $isa_field
-            and $form->field($field_name)->class =~ m/text|char/ )
+            and $col_def->{type} eq 'string' )
         {
-            push( @{ $self->{col_filter} }, $field_name );
+            push( @{ $self->{text_columns} }, $field_name );
         }
 
         next unless $form->metadata->show_related_values;
         next unless $form->metadata->is_related_field($field_name);
 
         my $rel_info = $form->metadata->related_field($field_name);
-
+        my $ffield   = $form->metadata->show_related_field_using(
+            $rel_info->{foreign_class}, $field_name, );
         $self->{show_related_values}->{$field_name} = {
             method        => $rel_info->{method},
-            foreign_field => $form->metadata->show_related_field_using(
-                $rel_info->{foreign_class}, $field_name,
-            ),
+            foreign_field => $ffield,
         };
+
+        next;
+
+        # TODO allow for non-local column names to be filtered on
+
+        if (    $isa_field
+            and $col_def->{type} ne 'string' )
+        {
+            push( @{ $self->{text_columns} }, $rel_info->{method} );
+        }
 
     }
 
     # always include pk since that's what is used for links
     my $pk_name = join( ';;', @{ $self->{pk} } );
+    my $col_def = {
+        key => $pk_name,
+
+        # must force label object to stringify
+        label => (
+            $form->metadata->labels->{$pk_name}
+                || join( ' ', map { ucfirst($_) } split( m/\_/, $pk_name ) )
+        ),
+
+        sortable => $pk_name =~ m/;;/
+        ? JSON::XS::false()
+        : JSON::XS::true(),
+
+        type => $form->field($pk_name)
+        ? $self->_get_col_type( $form->field($pk_name)->class )
+        : 'string',
+
+        # per-column click
+        url => $app->uri_for( $form->metadata->field_uri($pk_name) ),
+    };
     push(
-        @{ $self->{columns} },
-        {   key => $pk_name,
+        @{ $self->{columns} }, $col_def
 
-            # must force label object to stringify
-            label => (
-                $form->metadata->labels->{$pk_name}
-                    || join( ' ',
-                    map { ucfirst($_) } split( m/\_/, $pk_name ) )
-            ),
-
-            sortable => $pk_name =~ m/;;/
-            ? JSON::XS::false()
-            : JSON::XS::true(),
-
-            # per-column click
-            url => $app->uri_for( $form->metadata->field_uri($pk_name) ),
-        }
     );
+    push(
+        @{ $self->{col_filter} },
+        { dataIndex => $col_def->{key}, type => $col_def->{type} }
+    );
+
     push( @filtered_col_names, $pk_name );
 
     $self->col_names( \@filtered_col_names );
 
-    return $self;
+    if ( $self->{sort_by} =~ s/ (ASC|DESC)$//i ) {
+        $self->{sort_dir} = $1;
+    }
+    else {
+        $self->{sort_dir} = 'ASC';
+    }
 
+    my $moniker = ref $self->controller;
+    $moniker =~ s/^.+:://;
+    $self->{title} = 'Results for ' . $moniker;
+
+    return $self;
 }
 
 =head2 column( I<field_name> )
@@ -327,6 +370,147 @@ sub serialize {
     return $serializer->serialize_datatable($self);
 }
 
+sub _get_col_type {
+    my ( $self, $class ) = @_;
+
+    #warn "class = $class\n";
+
+    $class ||= 'text';
+
+    if ( $class =~ m/text|char|autocomplete/ ) {
+        return 'string';
+    }
+    elsif ( $class =~ m/int|num|radio|serial/ ) {
+        return 'numeric';
+    }
+    elsif ( $class eq 'boolean' ) {
+        return 'boolean';
+    }
+    elsif ( $class =~ m/date|time/ ) {
+        return 'date';
+    }
+    else {
+        return 'string';
+    }
+
+}
+
+=head2 json_reader_opts
+
+Returns hash ref suitable for JSON-ifying and passing to
+the LiveGrid JsonReader constructor.
+
+=cut
+
+sub json_reader_opts {
+    my $self = shift;
+
+    return {
+        root            => 'response.value.items',
+        versionProperty => 'response.value.version',
+        totalProperty   => 'response.value.total_count',
+        id              => $self->pk->[0],                 # TODO multiples
+        }
+
+}
+
+=head2 json_reader_columns
+
+Returns array ref suitable for JSON-ifying and passing
+to the LiveGrid JsonReader constructor.
+
+=cut
+
+sub json_reader_columns {
+    my $self = shift;
+    my $cols = $self->{columns};
+
+    my @new;
+    for my $col (@$cols) {
+        my $hash = { name => $col->{key} };
+        if ( $col->{sortable} ) {
+            $hash->{sortType}
+                = ( $col->{type} eq 'string' )
+                ? 'string'
+                : 'int';
+        }
+        push( @new, $hash );
+    }
+    return \@new;
+}
+
+=head2 column_defs
+
+Returns array ref suitable for JSON-ifying for LiveGrid JS.
+
+=cut
+
+sub column_defs {
+    my $self = shift;
+    my @defs;
+    my $widths = $self->__calc_widths;
+    for my $col ( @{ $self->columns } ) {
+        my $def = {
+            header    => $col->{label},
+            align     => 'left',                     # TODO optional
+            width     => $widths->{ $col->{key} },
+            sortable  => $col->{sortable},
+            dataIndex => $col->{key},
+            type      => $col->{type},
+        };
+        push( @defs, $def );
+    }
+    return \@defs;
+}
+
+# TODO memoize this?
+
+sub __calc_widths {
+    my $self = shift;
+    my %w;
+    my $max       = 600;
+    my $def_width = int( $max / scalar( @{ $self->columns } ) );
+    my $total     = 0;
+    for my $col ( @{ $self->columns } ) {
+        my $width = $def_width;
+        if ( $col->{type} eq 'date' ) {
+            $width = 100;
+        }
+        elsif ( $col->{type} eq 'string' ) {
+            $width = 100 unless $def_width > 100;
+        }
+        elsif ( $col->{type} eq 'numeric' ) {
+            $width = 60;
+        }
+        elsif ( $col->{type} eq 'boolean' ) {
+            $width = 12;
+        }
+
+        $w{ $col->{key} } = $width;
+        $total += $width;
+    }
+
+    if ( $total < $max ) {
+        while ( $total < $max ) {
+            for my $n ( keys %w ) {
+                $w{$n}++;
+                $total++;
+            }
+        }
+    }
+
+    if ( $total >= $max ) {
+        while ( $total > $max ) {
+            for my $n ( keys %w ) {
+                $w{$n}--;
+                $total--;
+            }
+        }
+    }
+
+    return \%w;
+}
+
 1;
 
 __END__
@@ -345,12 +529,12 @@ notified of progress on your bug as I make changes.
 =head1 ACKNOWLEDGEMENTS
 
 The Minnesota Supercomputing Institute C<< http://www.msi.umn.edu/ >>
+and NALD C<< http://www.nald.ca/ >>
 sponsored the development of this software.
 
 =head1 COPYRIGHT & LICENSE
 
 Copyright 2008 by the Regents of the University of Minnesota.
-
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

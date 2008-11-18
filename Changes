@@ -53,3 +53,16 @@ Revision history for CatalystX-CRUD-YUI
         * add support for form.metadata.default_selected to Tabs in show_relationships.tt
         * allow for explicit sort direction in initial datatable sort
 
+0.008   17 Nov 2008
+        * tweek CSS for a.box to fix padding in relation to form.inline, button.box
+        * fix crud.js bug to allow for sort column to include table prefix (e.g., t2.name)
+        * total refactor of UI to include:
+            * left menu instead of tabbed relationships view
+            * stricter dom structure
+            * yui_header.tt
+            * split up some .tt into smaller chunks
+            * RelOpts hash instead of separate *_relationships vars in .tt
+            * use LiveGrid instead of YUI DataTable
+        ***NOTE*** all the YUI DataTable support is now dropped in favor of LiveGrid
+
+

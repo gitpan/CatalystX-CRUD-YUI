@@ -6,6 +6,12 @@
 #
 # TODO some default JS validation would be nice here.
 
+# table tags
+SET thopen  = '<th class="crud" valign="top">';
+SET thclose = '</th>';
+SET tdopen  = '<td class="crud" valign="top">';
+SET tdclose = '</td>';
+
 # DEFAULT didn't work as expected here.
 UNLESS fields.defined;
     SET fields = { order = [], readonly = {} };
@@ -36,7 +42,8 @@ USE autoformat( all = 1 );  # for textarea readonly
 [% SET id = field.id %]
 <span class="calendar_container" id="[% id %]_calendar_container"><img class='calendar'
      src='[% YUIBaseURL %]/[% YUIVersion %]/examples/button/assets/calendar_icon.gif'
-     onclick=YAHOO.crud.datetime_picker("[% id %]") />
+     onclick='YAHOO.crud.datetime_picker("[% id %]")'
+     alt="calendar icon" />
 </span>
 [% END %]
 [% BLOCK date_popup %]
@@ -44,7 +51,8 @@ USE autoformat( all = 1 );  # for textarea readonly
 <span class="calendar_container" id="[% id %]_calendar_container">
 <img class='calendar'
      src='[% YUIBaseURL %]/[% YUIVersion %]/examples/button/assets/calendar_icon.gif'
-     onclick=YAHOO.crud.date_picker("[% id %]") />
+     onclick='YAHOO.crud.date_picker("[% id %]")'
+     alt="calendar icon" />
 </span>
 [% END %]
 
@@ -52,6 +60,7 @@ USE autoformat( all = 1 );  # for textarea readonly
 <div class="error">[% error || form.error %]</div>
 [% END %]
 
+<table class="crud">
 [%  FOREACH fname = fields.order;
 
         field = form.field( fname );
@@ -70,15 +79,26 @@ USE autoformat( all = 1 );  # for textarea readonly
                 CALL field.output_format( yui.serializer.datetime_format );
             END;
         END;
+ %]
+ <tr class="[% (loop.count % 2) ? 'alternate' : '' %]">
+ [%
 
         # read-only fields
         # check these first as this is not a field attribute
         IF (fields.readonly.defined( fname ));
-            field.xhtml_label;
+            thopen; field.xhtml_label; thclose;
+            
+            tdopen;
 
             "<span class='input'>";
             IF field.isa('Rose::HTML::Form::Field::TextArea');
-                "<pre>"; autoformat( field.output_value ); "</pre>";
+                "<pre>";
+                UNLESS field.output_value.match('\n');
+                    autoformat( field.output_value );
+                ELSE;
+                    field.output_value;
+                END;
+                "</pre>";
             ELSIF field.isa('Rose::HTML::Form::Field::DateTime');
               IF (field.internal_value.epoch.defined);
                 field.output_value _ '';
@@ -98,11 +118,13 @@ USE autoformat( all = 1 );  # for textarea readonly
             # optionally pass the readonly value through hidden
             # as when creating an object with a FK that is readonly.
             # this only works with values that are not objects themselves.
-            IF (fields.readonly.item( fname ) > 1) %]
+            IF (fields.readonly.item( fname ) > 1) 
+ %]
               <input type="hidden" name="[% fname %]" value="[% field.output_value %]" />
-            [% END;
+ [% 
+            END;
             
-            "<br />\n";
+            tdclose;
         
         # autocomplete magic
         ELSIF (field.can('autocomplete'));
@@ -122,54 +144,66 @@ USE autoformat( all = 1 );  # for textarea readonly
             };
             # if searching, we do not have an object yet.
             IF (object);
-                input.value  = field.internal_value || 
-                    form.metadata.foreign_field_value( fname, object );
+                input.value  = 
+                    form.metadata.foreign_field_value( fname, object )
+                    ||
+                    field.internal_value;
             END;
             PROCESS crud/autocomplete_field.tt;
-            "<br />\n";
 
         # checkboxes
         ELSIF (field.can('xhtml_checkbox'));
-            field.xhtml_label;
-            field.xhtml_checkbox;
-            "<br />\n";
+            thopen; field.xhtml_label; thclose;
+            tdopen; field.xhtml_checkbox; tdclose;
       
         # hidden fields
         ELSIF (field.isa('Rose::HTML::Form::Field::Hidden'));
             IF show_hidden_fields;
                 t = form.hidden_to_text_field(field);
+                thopen;
                 t.xhtml_label;
+                thclose;
+                tdopen;
                 t.xhtml;
-                "<br />\n";
+                tdclose;
             ELSE;
                 field.xhtml;
             END;
                   
         # Dates and DateTimes get a popup calendar
         ELSIF field.isa('Rose::HTML::Form::Field::DateTime');
+            thopen;
             field.xhtml_label;
+            thclose;
+            tdopen;
             field.xhtml;
             PROCESS datetime_popup;
-            "<br />\n";
+            tdclose;
             
         ELSIF field.isa('Rose::HTML::Form::Field::Date');
+            thopen;
             field.xhtml_label;
+            thclose;
+            tdopen;
             field.xhtml;
             PROCESS date_popup;
-            "<br />\n";
+            tdclose;
             
         # default
         ELSE;
-                        
+            thopen;           
             field.xhtml_label;
+            thclose;
+            tdopen;
             field.xhtml;
             PROCESS related_field_info;
-            "<br />\n";
+            tdclose;
             
-        END;    # IF/ELSE        
-    END;  # FOREACH
-        
+        END;    # IF/ELSE
+    '</tr>';        
+    END;  # FOREACH     
 %]
+</table>
 
 [% BLOCK related_field_info %]
 [%
@@ -190,7 +224,7 @@ USE autoformat( all = 1 );  # for textarea readonly
 
   IF (foreign_field);
     # show related record value literally
-    SET viewable_value  = object.$method.$foreign_field;
+    SET viewable_value  = object.$method.unique_value;
     SET myval_uri_safe  = field.internal_value | uri;
     
     SET base_foreign_url = c.uri_for('/' _ rel_info.controller.path_prefix);
@@ -200,15 +234,16 @@ USE autoformat( all = 1 );  # for textarea readonly
     IF (rel_info.controller.isa('CatalystX::CRUD::REST'));
         myurl = base_foreign_url _ '/' _ myval_uri_safe;
     ELSE;
-        myurl = base_foreign_url _ '/' _ myval_uri_safe _ '/' _ (c.session.prefs.default_crud_action || (rel_info.controller.can_write(c) ? 'edit' : 'view'));
+        myurl = base_foreign_url _ '/' _ myval_uri_safe _ 
+                '/' _ (c.session.prefs.default_crud_action || (rel_info.controller.can_write(c) ? 'edit' : 'view'));
     END;
     
     IF viewable_value.length;
-        "&nbsp;<a class='box' href='$myurl'>$viewable_value</a>";
+        "&nbsp;<a href='$myurl'>$viewable_value</a>";
     END;
   ELSE;
      # show link to related record
-    "&nbsp;<a class='box' href='$myurl'>Related record</a>";
+    "&nbsp;<a href='$myurl'>Related record</a>";
   END;
   
  END;
