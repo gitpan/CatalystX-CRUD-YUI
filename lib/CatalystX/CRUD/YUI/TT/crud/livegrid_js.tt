@@ -44,12 +44,8 @@
                 YAHOO.crud.log('no row passed on click');
                 return;
             }
-            YAHOO.crud.redirect_location({
-                'r'         : r,
-                'pk_fields' : [% livegrid.pk.as_json %],
-                'url'       : '[% c.uri_for("/" _ livegrid.controller.action_namespace) %]/',
-                'action'    : '[% (c.session.prefs.default_crud_action || 'view') %]'
-            });
+            window.location.href = '[% c.uri_for("/" _ livegrid.controller.action_namespace) %]/' + 
+                                r.id + '/' + '[% (c.session.prefs.default_crud_action || 'view') %]';
         },
         filters     : [% livegrid.col_filter.as_json %],
         text_columns: [% livegrid.text_columns.as_json %]

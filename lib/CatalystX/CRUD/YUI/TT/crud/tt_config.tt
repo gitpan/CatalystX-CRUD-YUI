@@ -6,5 +6,6 @@
     ExtVersion      = '2.2';
     LGBaseURL       = 'http://static.msi.umn.edu/livegrid';
     LGVersion       = 'trunk';
+    ThisIsDefTTConfig = 1;
 %]
 

@@ -110,3 +110,19 @@
 /* ]]> */
 </script>
 [% END %]
+
+[% # admonish the user to get their own copy of .js libs %]
+[% IF ExtJS.url.match('\.msi\.umn\.edu') && ThisIsDefTTConfig %]
+<script type="text/javascript">
+/* <![CDATA[ */
+    alert("Please download a copy of ExtJS 2.2+ from http://extjs.com/ and install it locally on a static web server. Then update your local root/crud/tt_config.tt file.");
+/* ]]> */
+</script>
+[% END %]
+[% IF LiveGrid.url.match('\.msi\.umn\.edu') && ThisIsDefTTConfig %]
+<script type="text/javascript">
+/* <![CDATA[ */
+    alert("Please download a copy of LiveGrid Javascript lib from http://code.google.com/p/ext-ux-livegrid/ and install it locally on a static web server. Then update your local root/crud/tt_config.tt file.");
+/* ]]> */
+</script>
+[% END %]

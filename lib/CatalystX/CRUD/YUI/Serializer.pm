@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui ));
 
-our $VERSION = '0.008';
+our $VERSION = '0.009';
 
 =head1 NAME
 
@@ -146,6 +146,13 @@ sub serialize_object {
 
     for my $col (@$col_names) {
 
+        # if $col is array ref, then it is PK
+        # the value will be the primary_key_uri_escaped
+        if ( ref($col) eq 'ARRAY' ) {
+            $flat->{ join( ';;', @$col ) } = $object->primary_key_uri_escaped;
+            next;
+        }
+
         # sanity check
         if ( !$object->can($col) ) {
             croak "no such method '$col' for object $object";
@@ -253,9 +260,9 @@ Returns array ref of hash refs as passed through serialize_object().
 
 sub serialize_datatable {
     my $self      = shift;
-    my $datatable = shift or croak "DataTable object required";
+    my $datatable = shift or croak "LiveGrid object required";
     my $results   = $datatable->results
-        or croak "no results in DataTable object";
+        or croak "no results in LiveGrid object";
     my $method_name = $datatable->method_name || '';
     my $max_loops
         = $datatable->form->app->req->params->{'cxc-no_page'}

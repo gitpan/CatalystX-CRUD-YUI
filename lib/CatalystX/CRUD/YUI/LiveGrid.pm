@@ -10,7 +10,7 @@ use JSON::XS ();
 use Scalar::Util qw( blessed );
 use CatalystX::CRUD::YUI::Serializer;
 
-our $VERSION = '0.008';
+our $VERSION = '0.009';
 
 __PACKAGE__->mk_accessors(
     qw( yui results controller form
@@ -307,23 +307,18 @@ sub _init {
         ? JSON::XS::false()
         : JSON::XS::true(),
 
-        type => $form->field($pk_name)
-        ? $self->_get_col_type( $form->field($pk_name)->class )
-        : 'string',
+        type => 'pk',
 
         # per-column click
         url => $app->uri_for( $form->metadata->field_uri($pk_name) ),
     };
-    push(
-        @{ $self->{columns} }, $col_def
-
-    );
+    push( @{ $self->{columns} }, $col_def );
     push(
         @{ $self->{col_filter} },
         { dataIndex => $col_def->{key}, type => $col_def->{type} }
     );
 
-    push( @filtered_col_names, $pk_name );
+    push( @filtered_col_names, $self->pk );
 
     $self->col_names( \@filtered_col_names );
 
@@ -359,7 +354,7 @@ sub column {
 
 =head2 serialize 
 
-Returns DataTable as array ref of hash refs, suitable
+Returns LiveGrid as array ref of hash refs, suitable
 for conversion to JSON or other transport type.
 
 =cut
@@ -409,7 +404,7 @@ sub json_reader_opts {
         root            => 'response.value.items',
         versionProperty => 'response.value.version',
         totalProperty   => 'response.value.total_count',
-        id              => $self->pk->[0],                 # TODO multiples
+        id              => join( ';;', @{ $self->pk } ),
         }
 
 }
@@ -448,67 +443,21 @@ Returns array ref suitable for JSON-ifying for LiveGrid JS.
 sub column_defs {
     my $self = shift;
     my @defs;
-    my $widths = $self->__calc_widths;
     for my $col ( @{ $self->columns } ) {
         my $def = {
             header    => $col->{label},
-            align     => 'left',                     # TODO optional
-            width     => $widths->{ $col->{key} },
+            align     => 'left',
             sortable  => $col->{sortable},
             dataIndex => $col->{key},
             type      => $col->{type},
         };
+        if ( $def->{type} eq 'pk' && $self->{hide_pk_columns} ) {
+            $def->{hidden} = JSON::XS::true();
+            $def->{type}   = 'string';
+        }
         push( @defs, $def );
     }
     return \@defs;
-}
-
-# TODO memoize this?
-
-sub __calc_widths {
-    my $self = shift;
-    my %w;
-    my $max       = 600;
-    my $def_width = int( $max / scalar( @{ $self->columns } ) );
-    my $total     = 0;
-    for my $col ( @{ $self->columns } ) {
-        my $width = $def_width;
-        if ( $col->{type} eq 'date' ) {
-            $width = 100;
-        }
-        elsif ( $col->{type} eq 'string' ) {
-            $width = 100 unless $def_width > 100;
-        }
-        elsif ( $col->{type} eq 'numeric' ) {
-            $width = 60;
-        }
-        elsif ( $col->{type} eq 'boolean' ) {
-            $width = 12;
-        }
-
-        $w{ $col->{key} } = $width;
-        $total += $width;
-    }
-
-    if ( $total < $max ) {
-        while ( $total < $max ) {
-            for my $n ( keys %w ) {
-                $w{$n}++;
-                $total++;
-            }
-        }
-    }
-
-    if ( $total >= $max ) {
-        while ( $total > $max ) {
-            for my $n ( keys %w ) {
-                $w{$n}--;
-                $total--;
-            }
-        }
-    }
-
-    return \%w;
 }
 
 1;

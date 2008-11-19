@@ -65,4 +65,8 @@ Revision history for CatalystX-CRUD-YUI
             * use LiveGrid instead of YUI DataTable
         ***NOTE*** all the YUI DataTable support is now dropped in favor of LiveGrid
 
+0.009   18 Nov 2008
+        * support multi-col PKs and hidden PKs with livegrid
+        * livegrid width now auto based on window width
+        * add warnings to get your own copy of ExtJS and LiveGrid for local consumption
 
