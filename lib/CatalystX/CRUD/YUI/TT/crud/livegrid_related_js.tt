@@ -26,7 +26,9 @@
     
     # UI controls
     IF r.rel_info.map_class;
+        #r.rel_info.as_hash.dump_data;
         SET foreign.m2m = 1;
+        SET foreign.column_map = [r.rel_info.map_from_column, r.rel_info.map_to_column];
         IF EDITMODE != 0;
             SET foreign.rm_button = 1;
         END;
@@ -35,6 +37,7 @@
         'column_map'    => [], 
         'url'           => c.uri_for(oid),
         'oid'           => oid,
+        'oidLabel'      => object.unique_value,
         'livegrid'      => c.uri_for(oid, 'livegrid_related', r.method, 
                                 {   'cxc-m2m'           => foreign.m2m
                                 }),
@@ -49,6 +52,7 @@
 %]
 <div id="livegrid[% r.livegrid.counter %]"></div>
 <div id="livegrid[% r.livegrid.counter %]-chooser" class="chooser"></div>
+<div id="livegrid[% r.livegrid.counter %]-form" class=""></div>
 <script type="text/javascript">
 /* <![CDATA[ */
   var relTab    = YAHOO.crud.new_relTab();
@@ -61,7 +65,18 @@
         && !RelOpts.hide_create.exists(r.method)) %]
   buttons.push({
         text    : 'Create new [% r.thisLabel %]',
-        handler : function(btn){ window.location.href = '[% r.create_new_url %]'}
+      [% IF foreign.m2m && r.num_fields < LIVEGRID_FORM_SIZE %]
+        handler : function(btn){ 
+            YAHOO.crud.livegrid_form({
+                'index':[% r.livegrid.counter %],
+                'form' :'[% r.map_form_url %]'
+            }); 
+        }
+      [% ELSE %]
+        handler : function(btn){ 
+            window.location = '[% r.create_new_url %]';
+        }
+      [% END %]
   }, '-');
     [%- END -%]
     [% UNLESS RelOpts.lock.exists( r.method ) %]
@@ -81,7 +96,7 @@
   buttons.push({
          text : 'Export as Excel',
          handler: function(btn) {
-            window.location.href = '[% r.export_as_xls_url %]';
+            window.location = '[% r.export_as_xls_url %]';
          }
   }, '-');
     [%- END -%]
@@ -98,6 +113,12 @@
          }
   }, '-');
     [%- END -%]
+  [% ELSE # i.e. in view mode %]
+  buttons.push({
+        text    : 'Edit [% r.thisLabel %]',
+        handler : function(btn){ window.location = 
+            '[% ThisURL # defined in edit.tt %]/edit#tabview=[% r.method %]Tab'}
+  }, '-');
   [% END # end EDITMODE %]
   relTab.grid.opts = {
         index       : [% r.livegrid.counter %],
@@ -118,6 +139,7 @@
         tools       : buttons,
         title       : '[% r.thisLabel %]',
         defer_load  : true,
+        num_fields  : [% r.num_fields %],
         rm_button   : [% foreign.rm_button ? 'true' : 'false' %],
         clickhandler: function(sm, rowIndex, rec) {
             YAHOO.crud.handle_related_livegrid_click({
@@ -125,8 +147,9 @@
                 'rowIndex'  : rowIndex,
                 'rec'       : rec,
                 'index'     : [% r.livegrid.counter %],
-                'url'       : '[% c.uri_for("/" _ r.livegrid.controller.action_namespace) %]/',
-                'action'    : '[% (c.session.prefs.default_crud_action || 'view') %]'
+                'url'       : '[% c.uri_for("/" _ r.livegrid.controller.path_prefix) %]/',
+                'm2m_url'   : '[% r.map_class_url %]/',
+                'action'    : '[% r.rowclick_action %]'
             });
         },
         filters     : [% r.livegrid.col_filter.as_json %],

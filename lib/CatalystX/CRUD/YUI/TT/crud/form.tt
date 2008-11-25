@@ -131,16 +131,17 @@ USE autoformat( all = 1 );  # for textarea readonly
             u = field.url;
             USE url = url( u.0, u.1 );
             SET input = {
-                    label  = field.xhtml_label,
-                    url    = u.0,
-                    params = url.match('\?(.+)$').0.replace('&amp;','&'),
-                    id     = 'ac_' _ fname,      # fname will be used as hidden field name
-                    fname  = fname,
-                    param  = u.1,
-                    limit  = field.limit,
-                    cache_size = 50,
-                    csize  = field.size || 0,
-                    tabindex = field.tabindex,
+                    label       = field.xhtml_label,
+                    url         = u.0,
+                    params      = url.match('\?(.+)$').0.replace('&amp;','&'),
+                    id          = 'ac_' _ fname,      # fname will be used as hidden field name
+                    hidden_value = field.internal_value,
+                    fname       = fname,
+                    param       = u.1,
+                    limit       = field.limit,
+                    cache_size  = 50,
+                    csize       = field.size || 0,
+                    tabindex    = field.tabindex,
             };
             # if searching, we do not have an object yet.
             IF (object);
@@ -243,7 +244,11 @@ USE autoformat( all = 1 );  # for textarea readonly
     END;
   ELSE;
      # show link to related record
-    "&nbsp;<a href='$myurl'>Related record</a>";
+     SET viewable_value  = object.$method.unique_value;
+     IF !viewable_value.length;
+         viewable_value = 'Related record';
+     END;
+    "&nbsp;<a href='$myurl'>$viewable_value</a>";
   END;
   
  END;

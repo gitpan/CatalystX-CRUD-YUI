@@ -6,7 +6,7 @@ use base qw( CatalystX::CRUD::Controller );
 use Carp;
 use Class::C3;
 
-#use Data::Dump qw( dump );
+use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(
     qw( autocomplete_columns autocomplete_method
@@ -28,7 +28,7 @@ __PACKAGE__->config(
     },
 );
 
-our $VERSION = '0.009';
+our $VERSION = '0.010';
 
 =head1 NAME
 
@@ -199,6 +199,34 @@ sub livegrid : Local {
     $self->do_search( $c, @arg );
     $c->stash( template => 'crud/livegrid.tt' );
     $c->response->content_type( $self->json_mime );
+}
+
+=head2 livegrid_create_form( I<context> )
+
+Returns plain HTML form without wrapper for use with LiveGrid
+relationship manager.
+
+=cut
+
+sub livegrid_create_form : Local {
+    my ( $self, $c ) = @_;
+    $self->create($c);
+    $c->stash( no_wrapper => 1 );
+    $c->stash( template   => 'crud/create.tt' );
+}
+
+=head2 livegrid_edit_form( I<context>, I<oid> ) 
+
+Lke livegrid_create_form but returns form initialized for
+record represented by I<oid>. Chained to fetch().
+
+=cut
+
+sub livegrid_edit_form : PathPart Chained('fetch') Args(0) {
+    my ( $self, $c ) = @_;
+    $self->edit($c);
+    $c->stash( no_wrapper => 1 );
+    $c->stash( template   => 'crud/edit.tt' );
 }
 
 =head2 yui_datatable_count( I<context>, I<arg> )

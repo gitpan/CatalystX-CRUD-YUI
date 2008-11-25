@@ -7,5 +7,6 @@
     LGBaseURL       = 'http://static.msi.umn.edu/livegrid';
     LGVersion       = 'trunk';
     ThisIsDefTTConfig = 1;
+    LIVEGRID_FORM_SIZE = 7;
 %]
 

@@ -14,7 +14,7 @@
          'results'      => results, 
          'controller'   => controller, 
          'form'         => form,
-         'field_names'  => field_names,
+         'col_names'    => field_names,
          'method_name'  => method_name,
          'show_remove_button' => c.req.params.item('cxc-add_rm_button')
     ); 

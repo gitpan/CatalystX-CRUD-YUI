@@ -10,13 +10,13 @@ use JSON::XS ();
 use Scalar::Util qw( blessed );
 use CatalystX::CRUD::YUI::Serializer;
 
-our $VERSION = '0.009';
+our $VERSION = '0.010';
 
 __PACKAGE__->mk_accessors(
     qw( yui results controller form
         method_name pk columns show_related_values
         col_filter text_columns col_names url count counter
-        field_names sort_by show_remove_button
+        sort_by show_remove_button
         serializer_class serializer
         hide_pk_columns sort_dir title excel_url
         )
@@ -41,18 +41,15 @@ CatalystX::CRUD::YUI::LiveGrid - ExtJS LiveGrid objects
 
 =head1 DESCRIPTION
 
-This is a subclass of CatalystX::CRUD::YUI::DataTable for use
-with the ExtJS-base LiveGrid component http://www.siteartwork.de/livegrid/.
-
-Only deviations from the CatalystX::CRUD::YUI::DataTable docs
-are described here.
+This class represents the data necessary to support
+the ExtJS-base LiveGrid component http://www.siteartwork.de/livegrid/.
 
 =head1 METHODS
 
 =head2 new( I<opts> )
 
-Create a YUI DataTable object.
-You usually call this via CatalystX::CRUD::YUI->datatable( I<opts> ).
+Create a YUI LiveGrid object.
+You usually call this via CatalystX::CRUD::YUI->livegrid( I<opts> ).
 
 I<opts> should include:
 
@@ -88,7 +85,7 @@ the objects being serialized, i.e., the controller governing I<form>.
 
 =back
 
-The new DataTable has the following accessors available:
+The new LiveGrid has the following accessors available:
 
 =over
 
@@ -98,7 +95,7 @@ The primary key of the table that I<results> represents.
 
 =item columns
 
-An arrayref of column hashrefs. YUI DataTable API requires these.
+An arrayref of column hashrefs. YUI LiveGrid API requires these.
 
 =item url
 
@@ -163,7 +160,7 @@ sub _init {
     $self->{hide_pk_columns} = $controller->hide_pk_columns;
 
     # may be undef. this is the method we call on the the parent object,
-    # where parent $results isa RDBO and we are creating a datatable out
+    # where parent $results isa RDBO and we are creating a livegrid out
     # of its related objects.
     my $method_name = $self->{method_name};
 
@@ -202,7 +199,7 @@ sub _init {
 
         if ( !$method_name ) {
             croak
-                "method_name required for CatalystX::CRUD::Object datatable";
+                "method_name required for CatalystX::CRUD::Object livegrid";
         }
         $self->url(
             $app->uri_for(
@@ -362,7 +359,7 @@ for conversion to JSON or other transport type.
 sub serialize {
     my $self = shift;
     my $serializer = $self->serializer || $self->serializer_class->new;
-    return $serializer->serialize_datatable($self);
+    return $serializer->serialize_livegrid($self);
 }
 
 sub _get_col_type {

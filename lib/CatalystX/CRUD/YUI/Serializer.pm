@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui ));
 
-our $VERSION = '0.009';
+our $VERSION = '0.010';
 
 =head1 NAME
 
@@ -136,7 +136,7 @@ sub serialize_object {
     }
 
     my $flat = {};
-    if ( defined $opts{datatable} and $opts{datatable}->show_remove_button ) {
+    if ( defined $opts{livegrid} and $opts{livegrid}->show_remove_button ) {
         $flat->{'_remove'} = ' X ';
     }
 
@@ -146,10 +146,13 @@ sub serialize_object {
 
     for my $col (@$col_names) {
 
-        # if $col is array ref, then it is PK
-        # the value will be the primary_key_uri_escaped
+        # if $col is array ref, then it is PK.
+        # however, value may not always be primary_key_uri_escaped()
+        # since the controller may define an alternate primary_key.
+        # so use the controller to get the value.
         if ( ref($col) eq 'ARRAY' ) {
-            $flat->{ join( ';;', @$col ) } = $object->primary_key_uri_escaped;
+            $flat->{ join( ';;', @$col ) } = $opts{livegrid}
+                ->controller->make_primary_key_string($object);
             next;
         }
 
@@ -252,23 +255,23 @@ sub serialize_object {
 
 }
 
-=head2 serialize_datatable( I<datatable_object> )
+=head2 serialize_livegrid( I<livegrid_object> )
 
 Returns array ref of hash refs as passed through serialize_object().
 
 =cut
 
-sub serialize_datatable {
-    my $self      = shift;
-    my $datatable = shift or croak "LiveGrid object required";
-    my $results   = $datatable->results
+sub serialize_livegrid {
+    my $self     = shift;
+    my $livegrid = shift or croak "LiveGrid object required";
+    my $results  = $livegrid->results
         or croak "no results in LiveGrid object";
-    my $method_name = $datatable->method_name || '';
+    my $method_name = $livegrid->method_name || '';
     my $max_loops
-        = $datatable->form->app->req->params->{'cxc-no_page'}
+        = $livegrid->form->app->req->params->{'cxc-no_page'}
         ? 0
-        : (    $datatable->form->app->req->params->{'cxc-page_size'}
-            || $datatable->controller->page_size );
+        : (    $livegrid->form->app->req->params->{'cxc-page_size'}
+            || $livegrid->controller->page_size );
 
     my $counter = 0;
     my @data;
@@ -292,20 +295,20 @@ sub serialize_datatable {
             $self->serialize_object(
                 {   object      => $object,
                     method_name => $method_name,
-                    col_names   => $datatable->col_names,
-                    parent      => $datatable->form->app->stash->{object},
-                    c           => $datatable->form->app,
-                    show_related_values => $datatable->show_related_values,
+                    col_names   => $livegrid->col_names,
+                    parent      => $livegrid->form->app->stash->{object},
+                    c           => $livegrid->form->app,
+                    show_related_values => $livegrid->show_related_values,
                     takes_object_as_argument =>
-                        $datatable->form->metadata->takes_object_as_argument,
-                    datatable => $datatable,
+                        $livegrid->form->metadata->takes_object_as_argument,
+                    livegrid => $livegrid,
                 }
             )
         );
         last if $max_loops > 0 && ++$counter > $max_loops;
     }
 
-    $datatable->{count} = $counter;
+    $livegrid->{count} = $counter;
 
     return \@data;
 }

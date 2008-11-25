@@ -12,7 +12,7 @@ use Data::Dump qw( dump );
 __PACKAGE__->mk_accessors(
     qw( serializer_class livegrid_class ));
 
-our $VERSION = '0.009';
+our $VERSION = '0.010';
 
 =head1 NAME
 

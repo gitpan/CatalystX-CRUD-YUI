@@ -70,3 +70,12 @@ Revision history for CatalystX-CRUD-YUI
         * livegrid width now auto based on window width
         * add warnings to get your own copy of ExtJS and LiveGrid for local consumption
 
+0.010   24 Nov 2008
+        * add unique_value() check in form related label even if foreign_field is undef
+        * fix autocomplete_field to initialize the hidden input with the original internal_value
+        * livegrid_create_form() controller method and supporting JS. This enables o2m and m2m creation
+          without leaving the current page. The number of fields controls whether it is enabled
+          or not. See the LIVEGRID_FORM_SIZE setting in crud/tt_config.tt.
+        * replace all 'datatable' instances with 'livegrid' in Serializer class.
+        * PK value in Serializer comes from controller to allow app override of schema class.
+
