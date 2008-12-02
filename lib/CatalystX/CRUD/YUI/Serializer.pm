@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui ));
 
-our $VERSION = '0.010';
+our $VERSION = '0.011';
 
 =head1 NAME
 
@@ -267,11 +267,18 @@ sub serialize_livegrid {
     my $results  = $livegrid->results
         or croak "no results in LiveGrid object";
     my $method_name = $livegrid->method_name || '';
-    my $max_loops
-        = $livegrid->form->app->req->params->{'cxc-no_page'}
-        ? 0
-        : (    $livegrid->form->app->req->params->{'cxc-page_size'}
-            || $livegrid->controller->page_size );
+    my $params = $livegrid->form->app->req->params;
+    my $max_loops;
+    if ( $results->query->{limit} ) {
+        $max_loops = 0;    # db handled the limit
+    }
+    else {
+        $max_loops
+            = $params->{'cxc-no_page'}
+            ? 0
+            : (    $params->{'cxc-page_size'}
+                || $livegrid->controller->page_size );
+    }
 
     my $counter = 0;
     my @data;

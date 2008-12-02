@@ -28,7 +28,7 @@ __PACKAGE__->config(
     },
 );
 
-our $VERSION = '0.010';
+our $VERSION = '0.011';
 
 =head1 NAME
 
@@ -86,8 +86,8 @@ See the autocomplete_method() method. Value should be a method name.
 
 =item hide_pk_columns
 
-Used in the DataTable class. Boolean setting indicating whether the 
-primary key column(s) should appear in the YUI DataTable listings
+Used in the LiveGrid class. Boolean setting indicating whether the 
+primary key column(s) should appear in the YUI LiveGrid listings
 or not. Default is true.
 
 =item fuzzy_search
@@ -165,19 +165,6 @@ sub default : Path {
     $c->response->redirect( $c->uri_for('count') );
 }
 
-=head2 yui_datatable( I<context>, I<arg> )
-
-Deprecated. Use livegrid() instead.
-
-=cut
-
-sub yui_datatable : Local {
-    my ( $self, $c, @arg ) = @_;
-    $c->res->status(404);
-    $c->res->body('yui_datatable is deprecated');
-    return;
-}
-
 =head2 livegrid( I<context>, I<arg> )
 
 Public URI method. Returns JSON for ExtJS LiveGrid feature.
@@ -227,32 +214,6 @@ sub livegrid_edit_form : PathPart Chained('fetch') Args(0) {
     $self->edit($c);
     $c->stash( no_wrapper => 1 );
     $c->stash( template   => 'crud/edit.tt' );
-}
-
-=head2 yui_datatable_count( I<context>, I<arg> )
-
-Deprecated. Use livegrid methods instead.
-
-=cut
-
-sub yui_datatable_count : Local {
-    my ( $self, $c, @arg ) = @_;
-    $c->res->status(404);
-    $c->res->body('yui_datatable is deprecated');
-    return;
-}
-
-=head2 yui_related_datatable( I<oid>, I<relationship_name> )
-
-Deprecated. Use livegrid_related instead.
-
-=cut
-
-sub yui_related_datatable : PathPart Chained('fetch') Args(1) {
-    my ( $self, $c, $rel_name ) = @_;
-    $c->res->status(404);
-    $c->res->body('yui_datatable is deprecated');
-    return;
 }
 
 =head2 livegrid_related( I<oid>, I<relationship_name> )
@@ -438,7 +399,7 @@ sub form_to_object {
 
     #carp "form_to_object";
 
-    # check for o2m via datatable-click to avoid
+    # check for o2m via livegrid-click to avoid
     # re-saving duplicates
     if ( $c->req->params->{'cxc-o2m'} ) {
         my $obj      = $c->stash->{object};

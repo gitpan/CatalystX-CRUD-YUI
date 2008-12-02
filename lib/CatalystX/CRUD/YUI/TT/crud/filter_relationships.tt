@@ -91,11 +91,11 @@ FOREACH rel IN rel_order;
     SET base_url       = c.uri_for('/' _ rel_info.controller.path_prefix);
     SET map_params     = {};
     SET map_to         = '';
-    SET map_form_url   = '';
-    SET map_class_url  = '';
+    SET m2m_url        = '';
+    SET m2m_map_to_url = '';
     IF (rel_info.type == 'many to many');
-        map_form_url = c.uri_for('/' _ rel_info.controller.path_prefix, 'livegrid_create_form');
-        map_class_url = c.uri_for('/' _ c.controller(rel_info.map_class_controller_class).path_prefix);
+        m2m_url = c.uri_for('/' _ rel_info.controller.path_prefix, 'livegrid_create_form');
+        m2m_map_to_url = c.uri_for('/' _ c.controller(rel_info.map_class_controller_class).path_prefix);
     ELSE;
         FOREACH local_col IN rel_info.cmap.keys.sort;
             SET fk          = rel_info.cmap.$local_col;
@@ -115,7 +115,7 @@ FOREACH rel IN rel_order;
     
     SET num_fields        = rel_info.get_controller.field_names(c).size;
     SET rowclick_action   = c.session.prefs.default_crud_action || 'view';
-    IF (num_fields < LIVEGRID_FORM_SIZE && rel_info.controller.can_write(c));
+    IF (LIVEGRID_FORM_SIZE < num_fields && EDITMODE && !map_form_url);
         rowclick_action = 'livegrid_edit_form';
     END;
     
@@ -125,11 +125,11 @@ FOREACH rel IN rel_order;
         'rel_info'          => rel_info,
         'map_to'            => map_to,
         'map_params'        => map_params,
-        'map_form_url'      => map_form_url,
+        'm2m_url'           => m2m_url,
         'num_fields'        => num_fields,
         'rowclick_action'   => rowclick_action,
         'base_url'          => base_url,
-        'map_class_url'     => map_class_url,
+        'm2m_map_to_url'    => m2m_map_to_url,
         'create_new_url'    => create_new_url,
         'export_as_xls_url' => export_as_xls_url,
         'thisLabel'         => thisLabel,

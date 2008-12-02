@@ -79,3 +79,8 @@ Revision history for CatalystX-CRUD-YUI
         * replace all 'datatable' instances with 'livegrid' in Serializer class.
         * PK value in Serializer comes from controller to allow app override of schema class.
 
+0.011   2 Dec 2008
+        * revert crud.js to ignore m2m_url on livegrid row click. The feature needs more thought.
+        * fix bug with limit != count so increased livegrid buffer size from 50 to 200.
+        * disable m2m features for Excel, etc., till they can be thought through for usability.
+

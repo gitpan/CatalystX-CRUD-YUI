@@ -62,26 +62,19 @@
   var buttons = ['-'];
   [% IF EDITMODE != 0 -%]
     [% IF (r.rel_info.controller.can_write(c) 
-        && !RelOpts.hide_create.exists(r.method)) %]
+        && !RelOpts.hide_create.exists(r.method))
+        && !foreign.m2m # o2m only
+     %]
   buttons.push({
         text    : 'Create new [% r.thisLabel %]',
-      [% IF foreign.m2m && r.num_fields < LIVEGRID_FORM_SIZE %]
-        handler : function(btn){ 
-            YAHOO.crud.livegrid_form({
-                'index':[% r.livegrid.counter %],
-                'form' :'[% r.map_form_url %]'
-            }); 
-        }
-      [% ELSE %]
         handler : function(btn){ 
             window.location = '[% r.create_new_url %]';
         }
-      [% END %]
   }, '-');
     [%- END -%]
     [% UNLESS RelOpts.lock.exists( r.method ) %]
   buttons.push({
-        text    : 'Add existing [% r.thisLabel %]',
+        text    : 'Add [% r.thisLabel %]',
         tooltip :'Add a new row',
         iconCls :'plus-button',
         handler : function(btn) { 
@@ -92,7 +85,7 @@
         }
   }, '-');
     [%- END -%]
-    [% IF r.rel_info.map_class # TODO support excel export for m2m records %]
+    [% IF !r.rel_info.map_class # TODO support excel export for m2m records %]
   buttons.push({
          text : 'Export as Excel',
          handler: function(btn) {
@@ -147,7 +140,7 @@
                 'rowIndex'  : rowIndex,
                 'rec'       : rec,
                 'index'     : [% r.livegrid.counter %],
-                'url'       : '[% c.uri_for("/" _ r.livegrid.controller.path_prefix) %]/',
+                'url'       : '[% r.base_url %]/',
                 'm2m_url'   : '[% r.map_class_url %]/',
                 'action'    : '[% r.rowclick_action %]'
             });
