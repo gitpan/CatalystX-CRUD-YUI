@@ -28,7 +28,7 @@ __PACKAGE__->config(
     },
 );
 
-our $VERSION = '0.011';
+our $VERSION = '0.012';
 
 =head1 NAME
 
@@ -251,7 +251,7 @@ sub do_related_search {
 
     my $obj     = $c->stash->{object};
     my $query   = $self->do_model( $c, 'make_sql_query' );
-    my $count   = $obj->has_related($rel_name);
+    my $count   = $self->do_model( $c, 'count_related', $obj, $rel_name );
     my $results = $self->do_model( $c, 'iterator_related', $obj, $rel_name );
     my $pager;
     if ($count) {

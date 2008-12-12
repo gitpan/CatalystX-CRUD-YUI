@@ -79,8 +79,20 @@ Revision history for CatalystX-CRUD-YUI
         * replace all 'datatable' instances with 'livegrid' in Serializer class.
         * PK value in Serializer comes from controller to allow app override of schema class.
 
-0.011   2 Dec 2008
+0.011   02 Dec 2008
         * revert crud.js to ignore m2m_url on livegrid row click. The feature needs more thought.
         * fix bug with limit != count so increased livegrid buffer size from 50 to 200.
         * disable m2m features for Excel, etc., till they can be thought through for usability.
+
+0.012   12 Dec 2008
+        * split related_field_info BLOCK into its own related_field_link.tt file. Then use it in
+          autocomplete_field.tt
+        * tweeks to results livegrid size
+        * textarea fields use <pre>+autowrap+htmlescape unless they have HTML markup in them.
+        * click on related_field_link always defaults to 'view' regardless of can_write.
+          may be overridden with c.session.prefs.default_crud_action
+        * add html_escape feature to Serializer
+        * support dot notation for field_methods that chain related objects together.
+        * skip ManyToOne and OneToOne rels in filter_relationships.tt since we assume those
+          are handled by related_field_link.tt
 

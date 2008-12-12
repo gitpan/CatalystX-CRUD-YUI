@@ -48,6 +48,9 @@ END;
 FOREACH rel IN rel_order;
 
     NEXT IF rel.type && rel.type == 'foreign key';
+    NEXT IF rel.type && rel.type == 'many to one';
+    NEXT IF rel.type && rel.type == 'one to one';
+    
     SET rel_info = form.metadata.relationship_info( rel );
     NEXT IF rel_info.foreign_class == form.metadata.object_class;    
     SET method = rel_info.method;

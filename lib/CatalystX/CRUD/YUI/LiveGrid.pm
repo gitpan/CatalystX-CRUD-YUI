@@ -10,7 +10,7 @@ use JSON::XS ();
 use Scalar::Util qw( blessed );
 use CatalystX::CRUD::YUI::Serializer;
 
-our $VERSION = '0.011';
+our $VERSION = '0.012';
 
 __PACKAGE__->mk_accessors(
     qw( yui results controller form
@@ -198,8 +198,7 @@ sub _init {
         #carp "controller isa " . $controller;
 
         if ( !$method_name ) {
-            croak
-                "method_name required for CatalystX::CRUD::Object livegrid";
+            croak "method_name required for CatalystX::CRUD::Object livegrid";
         }
         $self->url(
             $app->uri_for(
@@ -233,6 +232,7 @@ sub _init {
         push( @filtered_col_names, $field_name );
 
         my $isa_field = $form->field($field_name);
+        my $isa_chain = $field_name =~ m/\./;
         my $col_def   = {
             key => $field_name,
 
@@ -241,7 +241,7 @@ sub _init {
             ? $isa_field->label . ''
             : ( $form->metadata->labels->{$field_name} || $field_name ),
 
-            sortable => $isa_field
+            sortable => ( $isa_field || $isa_chain )
             ? JSON::XS::true()
             : JSON::XS::false(),
 
@@ -260,8 +260,8 @@ sub _init {
             { dataIndex => $col_def->{key}, type => $col_def->{type} }
         );
 
-        if (    $isa_field
-            and $col_def->{type} eq 'string' )
+        if ( ( $isa_field and $col_def->{type} eq 'string' )
+            or $isa_chain )
         {
             push( @{ $self->{text_columns} }, $field_name );
         }
@@ -451,6 +451,9 @@ sub column_defs {
         if ( $def->{type} eq 'pk' && $self->{hide_pk_columns} ) {
             $def->{hidden} = JSON::XS::true();
             $def->{type}   = 'string';
+        }
+        if ( $col->{key} =~ m/\./ ) {
+            $def->{type} = 'string';
         }
         push( @defs, $def );
     }

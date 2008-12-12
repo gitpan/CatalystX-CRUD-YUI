@@ -12,10 +12,11 @@
  <div id="main">
 
  [% IF c.flash.message %]<div class="message">[% c.flash.message %]</div>[% END %]
-  
+
  <form method="post" 
        action="[% c.uri_for(oid, 'save') %]"
        class="crud"
+       onsubmit="return YAHOO.crud.submit_form(this)"
        >
   <fieldset>
    <legend>

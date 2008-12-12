@@ -38,6 +38,7 @@ lib/CatalystX/CRUD/YUI/TT/crud/livegrid_js.tt
 lib/CatalystX/CRUD/YUI/TT/crud/livegrid_related_js.tt
 lib/CatalystX/CRUD/YUI/TT/crud/menu.tt
 lib/CatalystX/CRUD/YUI/TT/crud/page_head_maker.tt
+lib/CatalystX/CRUD/YUI/TT/crud/related_field_link.tt
 lib/CatalystX/CRUD/YUI/TT/crud/results.tt
 lib/CatalystX/CRUD/YUI/TT/crud/schema_menu.tt
 lib/CatalystX/CRUD/YUI/TT/crud/search.tt

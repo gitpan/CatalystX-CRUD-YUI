@@ -56,6 +56,14 @@ form.inline {
     padding:0;
 }
 
+/* disable buttons */
+.disabled, .disabled:hover {
+    color: #222;
+    border: 1px solid #000;
+    background-color: #eee;
+    cursor: none;
+}
+
 table.crud th.crud,
 table.crud td.crud
 {

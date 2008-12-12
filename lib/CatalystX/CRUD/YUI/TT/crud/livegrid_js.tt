@@ -28,6 +28,7 @@
         pk          : [% livegrid.pk.as_json %],
         column_defs : [% livegrid.column_defs.as_json %],
         defer_load  : false,
+        height      : 500,
         tools       : [
         [%- IF livegrid.excel_url -%]
             {

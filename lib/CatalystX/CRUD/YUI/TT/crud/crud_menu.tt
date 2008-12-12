@@ -1,5 +1,6 @@
 <div id="crud-menu">
 [% PROCESS crud/crud_search.tt %]
+[% IF (object || CrudLinks.size || RelsToShow.size) %]
  <ul id="crud-links">
  [% IF object %]
   <li class="item first">You are [% c.action.name.replace('(e|_\w+)$') %]ing:</li>
@@ -18,6 +19,7 @@
  [% END %]
  [% END # RelsToShow.size %]
  </ul>
+[% END # if any links %]
 </div>
 
 [% IF object %]

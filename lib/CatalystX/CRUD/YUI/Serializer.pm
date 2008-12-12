@@ -9,9 +9,19 @@ use Scalar::Util qw( blessed );
 use JSON::XS ();
 use Data::Dump qw( dump );
 
-__PACKAGE__->mk_accessors(qw( datetime_format yui ));
+__PACKAGE__->mk_accessors(qw( datetime_format yui html_escape ));
 
-our $VERSION = '0.011';
+our $VERSION = '0.012';
+
+# html escaping
+my %Ents = (
+    '>' => '&gt;',
+    '<' => '&lt;',
+    '&' => '&amp;',
+    '"' => '&quot;',
+    "'" => '&apos;'
+);
+my $ToEscape = join( '', keys %Ents );
 
 =head1 NAME
 
@@ -22,7 +32,8 @@ CatalystX::CRUD::YUI::Serializer - flatten CatalystX::CRUD::Object instances
  use CatalystX::CRUD::YUI::Serializer;
  
  my $serializer = CatalystX::CRUD::YUI::Serializer->new(
-                    datetime_format => '%Y-%m-%d %H:%M:%S'
+                    datetime_format => '%Y-%m-%d %H:%M:%S',
+                    html_escape     => 1,
                     );
                     
  my $hashref = $serializer->serialize_object( 
@@ -54,6 +65,7 @@ sub new {
     my $class = shift;
     my $self = $class->next::method( ref $_[0] ? @_ : {@_} );
     $self->{datetime_format} ||= '%Y-%m-%d %H:%M:%S';
+    $self->{html_escape} = 1 unless defined $self->{html_escape};
     return $self;
 }
 
@@ -61,6 +73,13 @@ sub new {
 
 Set strftime-style DateTime format string. Default is '%Y-%m-%d %H:%M:%S'.
 Used in serialize_object().
+
+=cut
+
+=head2 html_escape
+
+serialize_object() will escape all special HTML characters by default.
+Set html_escape to false (0) if turn that feature off.
 
 =cut
 
@@ -156,9 +175,13 @@ sub serialize_object {
             next;
         }
 
+        # if $col has a . (dot) then it is a chained string of methods
+        my @methods = split( m/\./, $col );
+        my $first_method = shift @methods;
+
         # sanity check
-        if ( !$object->can($col) ) {
-            croak "no such method '$col' for object $object";
+        if ( !$object->can($first_method) ) {
+            croak "no such method '$first_method' for object $object";
         }
 
         # non-accessor methods. these are NOT FK methods.
@@ -189,30 +212,42 @@ sub serialize_object {
                 }
 
                 if ($obj_to_pass) {
-                    eval { $flat->{$col} = $object->$col( $opts{parent} ); };
+                    eval {
+                        $flat->{$col}
+                            = $object->$first_method( $opts{parent} );
+                    };
                     if ($@) {
                         $flat->{$col} = '[not available]';
                     }
                 }
                 else {
-                    $flat->{$col} = $object->$col;
+                    $flat->{$col} = $object->$first_method;
                 }
 
             }
             else {
-                eval { $flat->{$col} = $object->$col( $opts{parent} ); };
+                eval {
+                    $flat->{$col} = $object->$first_method( $opts{parent} );
+                };
                 if ($@) {
                     $flat->{$col} = '[not available]';
                 }
             }
 
+            next;
+
+        }
+
+        # get end value
+        my $value = $object->$first_method;
+        for my $m (@methods) {
+            $value = $value->$m;
         }
 
         # DateTime objects
-        elsif ( blessed( $object->$col ) && $object->$col->isa('DateTime') ) {
-            if ( defined $object->$col->epoch ) {
-                $flat->{$col}
-                    = $object->$col->strftime( $self->datetime_format );
+        if ( blessed($value) && $value->isa('DateTime') ) {
+            if ( defined $value->epoch ) {
+                $flat->{$col} = $value->strftime( $self->datetime_format );
             }
             else {
                 $flat->{$col} = '';
@@ -232,7 +267,7 @@ sub serialize_object {
                 $flat->{$col} = $object->$method->$ff;
             }
             else {
-                $flat->{$col} = $object->$col;
+                $flat->{$col} = $value;
             }
         }
 
@@ -240,15 +275,20 @@ sub serialize_object {
         elsif ( $object->can('column_is_boolean')
             and $object->column_is_boolean($col) )
         {
-            $flat->{$col} = $object->$col ? 'true' : 'false';
+            $flat->{$col} = $value ? 'true' : 'false';
         }
 
         # default
         else {
-            $flat->{$col} = $object->$col;
+            $flat->{$col} = $value;
 
         }
 
+    }
+
+    # html escape
+    if ( $self->html_escape ) {
+        $flat->{$_} =~ s/([$ToEscape])/$Ents{$1}/og for keys %$flat;
     }
 
     return $flat;

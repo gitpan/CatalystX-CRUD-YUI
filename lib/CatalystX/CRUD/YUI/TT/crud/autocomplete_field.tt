@@ -48,4 +48,5 @@
         });
 /* ]]> */
 </script>
+[% PROCESS crud/related_field_link.tt %]
 [% tdclose %]

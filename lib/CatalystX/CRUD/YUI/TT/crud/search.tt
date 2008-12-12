@@ -28,12 +28,6 @@
  </form>
  
  [% IF results.count %]
-  <div class="xls_link"><a href="[% c.req.uri_with(
-            { 'cxc-fuzzy'   => c.controller.fuzzy_search, 
-              'cxc-fmt'     => 'xls', 
-              'cxc-no_page' => 1 
-            }
-            ) %]">Export as Excel</a></div>
   [% PROCESS crud/results.tt %]
  [% ELSIF results.query.plain_query_str %]
   <div>
