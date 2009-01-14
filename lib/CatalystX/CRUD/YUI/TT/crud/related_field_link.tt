@@ -1,6 +1,6 @@
 [%
  IF (!fname.defined);
-        THROW crud '"fname" must be defined in ' _ component.name;
+    THROW crud '"fname" must be defined in ' _ component.name;
  END;
  IF (     object
       &&  form.metadata.show_related_fields 

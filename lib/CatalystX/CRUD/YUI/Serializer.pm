@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui html_escape ));
 
-our $VERSION = '0.012';
+our $VERSION = '0.013';
 
 # html escaping
 my %Ents = (
@@ -288,7 +288,10 @@ sub serialize_object {
 
     # html escape
     if ( $self->html_escape ) {
-        $flat->{$_} =~ s/([$ToEscape])/$Ents{$1}/og for keys %$flat;
+        for ( keys %$flat ) {
+            next if !defined $flat->{$_};
+            $flat->{$_} =~ s/([$ToEscape])/$Ents{$1}/og;
+        }
     }
 
     return $flat;

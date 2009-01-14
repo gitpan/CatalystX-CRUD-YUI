@@ -96,3 +96,8 @@ Revision history for CatalystX-CRUD-YUI
         * skip ManyToOne and OneToOne rels in filter_relationships.tt since we assume those
           are handled by related_field_link.tt
 
+0.013   14 Jan 2009
+        * fix undef warnings in html escape.
+        * remove old crud/yui_related_datatable_js.tt
+        * fix console js bug evidenced with new Firebug release
+

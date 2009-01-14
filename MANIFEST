@@ -52,7 +52,6 @@ lib/CatalystX/CRUD/YUI/TT/crud/yui_footer.tt
 lib/CatalystX/CRUD/YUI/TT/crud/yui_header.tt
 lib/CatalystX/CRUD/YUI/TT/crud/yui_logger.tt
 lib/CatalystX/CRUD/YUI/TT/crud/yui_menu.tt
-lib/CatalystX/CRUD/YUI/TT/crud/yui_related_datatable_js.tt
 lib/CatalystX/CRUD/YUI/TT/static/css/crud.css
 lib/CatalystX/CRUD/YUI/TT/static/css/crud/base.css
 lib/CatalystX/CRUD/YUI/TT/static/css/crud/calendar.css
