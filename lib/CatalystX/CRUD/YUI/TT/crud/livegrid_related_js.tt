@@ -74,7 +74,7 @@
     [%- END -%]
     [% UNLESS RelOpts.lock.exists( r.method ) %]
   buttons.push({
-        text    : 'Add [% r.thisLabel %]',
+        text    : '[% foreign.m2m ? 'Add' : 'Reassign' %] [% r.thisLabel %]',
         tooltip :'Add a new row',
         iconCls :'plus-button',
         handler : function(btn) { 

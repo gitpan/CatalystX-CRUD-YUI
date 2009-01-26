@@ -11,7 +11,7 @@ use Class::Inspector;
 use CatalystX::CRUD::YUI;
 use CatalystX::CRUD::YUI::TT;
 
-our $VERSION = '0.013';
+our $VERSION = '0.014';
 
 =head1 NAME
 

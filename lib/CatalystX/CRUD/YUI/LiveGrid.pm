@@ -10,7 +10,7 @@ use JSON::XS ();
 use Scalar::Util qw( blessed );
 use CatalystX::CRUD::YUI::Serializer;
 
-our $VERSION = '0.013';
+our $VERSION = '0.014';
 
 __PACKAGE__->mk_accessors(
     qw( yui results controller form
@@ -326,7 +326,14 @@ sub _init {
         $self->{sort_dir} = 'ASC';
     }
 
-    my $moniker = ref $self->controller;
+    my $moniker;
+    my $object_class = $form->metadata->object_class;
+    if ($object_class->can('moniker')) {
+        $moniker = $object_class->moniker;
+    }
+    else {
+        $moniker = $object_class;
+    }
     $moniker =~ s/^.+:://;
     $self->{title} = 'Results for ' . $moniker;
 

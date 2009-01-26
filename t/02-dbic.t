@@ -19,7 +19,7 @@ SKIP: {
     #check for sqlite3 cmd line tool
     my @sqlite_version = `sqlite3 -version`;
     if ( !@sqlite_version ) {
-        skip "sqlite3 cmd line tool not found", 13;
+        skip "sqlite3 cmd line tool not found", 9;
     }
 
     use lib 't/MyDBIC/lib';

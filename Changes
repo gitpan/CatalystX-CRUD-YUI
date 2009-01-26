@@ -101,3 +101,9 @@ Revision history for CatalystX-CRUD-YUI
         * remove old crud/yui_related_datatable_js.tt
         * fix console js bug evidenced with new Firebug release
 
+0.014   26 Jan 2009
+        * tweek text for Add button in rel mgr to say 'Reassign' if a o2m relationship
+        * add Config::General to reqs
+        * LiveGrid title comes from object_class (or object_class->moniker if defined) 
+          rather than controller class name. 
+

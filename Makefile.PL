@@ -14,6 +14,7 @@ requires 'Text::Autoformat'                      => 0;
 requires 'Catalyst::View::TT'                    => 0;
 requires 'Catalyst::Plugin::Static::Simple'      => 0;
 requires 'Catalyst::Plugin::ConfigLoader'        => 0;
+requires 'Config::General'                       => 0;
 requires 'Catalyst::Action::RenderView'          => 0;
 requires 'CatalystX::CRUD'                       => 0.37;
 recommends 'CatalystX::CRUD::Model::RDBO'        => 0.16;
