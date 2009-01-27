@@ -19,7 +19,7 @@
         index       : [% livegrid.counter || 0 %],
         reader : {
             opts    : [% livegrid.json_reader_opts.as_json %], 
-            columns : [% livegrid.json_reader_columns.as_json %],
+            columns : [% livegrid.json_reader_columns.as_json %]
         },
         sort_by     : '[% livegrid.sort_by %]',
         sort_dir    : '[% livegrid.sort_dir %]',

@@ -107,3 +107,6 @@ Revision history for CatalystX-CRUD-YUI
         * LiveGrid title comes from object_class (or object_class->moniker if defined) 
           rather than controller class name. 
 
+0.015   27 Jan 2009
+        * fix IE-related bugs in JS (extra commas, IE idiosyncrasies)
+
