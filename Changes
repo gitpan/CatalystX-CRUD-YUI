@@ -110,3 +110,9 @@ Revision history for CatalystX-CRUD-YUI
 0.015   27 Jan 2009
         * fix IE-related bugs in JS (extra commas, IE idiosyncrasies)
 
+0.016   11 March 2009
+        * add c.config.cxcy.search_uri config option for rendering search box
+        * slight optimization in filter_relationships.tt for clarity
+        * add id attributes to crud buttons
+        * add support for arbitrary code to run on form submit with YAHOO.crud.onFormSubmit array
+        * add YAHOO.crud.wysiwygify() to crud.js for optional Rich Text Editor on textarea fields.

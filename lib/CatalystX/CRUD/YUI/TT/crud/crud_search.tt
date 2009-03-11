@@ -1,5 +1,6 @@
+[% IF c.config.cxcy.search_uri %]
  <div id="crud-search">
-  <form method="get" action="[% c.uri_for('/rdgc/search/fuzzy') %]">
+  <form method="get" action="[% c.uri_for( c.config.cxcy.search_uri ) %]">
     <input type="text" name="cxc-query" value="[% c.req.params.item('cxc-query') %]" />
    <input type="hidden" name="cxc-fuzzy" value="1" />
    <input type="hidden" name="cxc-op"    value="AND" />[%# TODO make this optional %]
@@ -7,3 +8,4 @@
    <input type="submit" name="search" value="Search" class="button" />
   </form>
  </div>
+[% END %]

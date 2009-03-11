@@ -1,11 +1,11 @@
 <div id="crud-buttons">
  <div class="buttons" style="float:left">
- <input class="button" type="submit" name="save" value="Save" />
+ <input id='cxc-save-button' class="button" type="submit" name="save" value="Save" />
  </div>
  <div class="buttons" style="float:right">
- <input class="button" type="reset" value="Reset" />
+ <input id='cxc-reset-button' class="button" type="reset" value="Reset" />
  [% IF object_id && !no_delete %]
-  <input class="button" type="submit" name="_delete" value="Delete"
+  <input id='cxc-delete-button' class="button" type="submit" name="_delete" value="Delete"
          onclick="if(confirm('Really delete?')){
            YAHOO.util.Dom.get('x-tunneled-method').value='DELETE';
            return true; } else { return false; }" />

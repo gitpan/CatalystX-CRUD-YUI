@@ -13,6 +13,7 @@
     #Y.css.push('build/treeview/assets/skins/sam/treeview');
     #Y.css.push('build/tabview/assets/skins/sam/tabview');
     Y.css.push('build/calendar/assets/skins/sam/calendar');
+    Y.css.push('build/editor/assets/skins/sam/editor');
     
     Y.js.push('build/utilities/utilities');
     Y.js.push('build/datasource/datasource-min');
@@ -29,6 +30,7 @@
     #Y.js.push('build/layout/layout-min');
     #Y.js.push('build/tabview/tabview-min');
     #Y.js.push('build/treeview/treeview-min');
+    Y.js.push('build/editor/editor-min');
     
   IF (!ExtJS.defined);
     SET ExtJS = {

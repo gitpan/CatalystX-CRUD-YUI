@@ -81,23 +81,23 @@ FOREACH rel IN rel_order;
     });
     
     # in case we have not yet initialized the controller instance
-    CALL rel_info.get_controller;
+    SET rel_controller = rel_info.get_controller;
     
     SET livegrid = yui.livegrid({
             'results'       => object, 
-            'controller'    => rel_info.get_controller, 
-            'form'          => rel_info.get_controller.form(c),
+            'controller'    => rel_controller, 
+            'form'          => rel_controller.form(c),
             'method_name'   => method,
-            'field_names'   => rel_info.get_controller.form(c).metadata.field_methods,
+            'field_names'   => rel_controller.form(c).metadata.field_methods,
     });
         
-    SET base_url       = c.uri_for('/' _ rel_info.controller.path_prefix);
+    SET base_url       = c.uri_for('/' _ rel_controller.path_prefix);
     SET map_params     = {};
     SET map_to         = '';
     SET m2m_url        = '';
     SET m2m_map_to_url = '';
     IF (rel_info.type == 'many to many');
-        m2m_url = c.uri_for('/' _ rel_info.controller.path_prefix, 'livegrid_create_form');
+        m2m_url = c.uri_for('/' _ rel_controller.path_prefix, 'livegrid_create_form');
         m2m_map_to_url = c.uri_for('/' _ c.controller(rel_info.map_class_controller_class).path_prefix);
     ELSE;
         FOREACH local_col IN rel_info.cmap.keys.sort;
@@ -116,7 +116,7 @@ FOREACH rel IN rel_order;
     USE export_as_xls_url = url(base_url _ "/search", map_params);
     export_as_xls_url     = export_as_xls_url _ '&amp;cxc-fmt=xls&amp;cxc-no_page=1';
     
-    SET num_fields        = rel_info.get_controller.field_names(c).size;
+    SET num_fields        = rel_controller.field_names(c).size;
     SET rowclick_action   = c.session.prefs.default_crud_action || 'view';
     IF (LIVEGRID_FORM_SIZE < num_fields && EDITMODE && !map_form_url);
         rowclick_action = 'livegrid_edit_form';
