@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui html_escape ));
 
-our $VERSION = '0.016';
+our $VERSION = '0.017';
 
 # html escaping
 my %Ents = (
@@ -240,8 +240,13 @@ sub serialize_object {
 
         # get end value
         my $value = $object->$first_method;
-        for my $m (@methods) {
-            $value = $value->$m;
+        if ( defined $value ) {
+            for my $m (@methods) {
+                my $v = $value->$m;
+                if ( defined $v ) {
+                    $value = $v;
+                }
+            }
         }
 
         # DateTime objects

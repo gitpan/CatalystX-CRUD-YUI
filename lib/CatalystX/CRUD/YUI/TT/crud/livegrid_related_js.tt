@@ -60,9 +60,10 @@
   relTab.id     = '[% r.method %]Tab';
   relTab.name   = '[% r.method %]';
   var buttons = ['-'];
-  [% IF EDITMODE != 0 -%]
-    [% IF (r.rel_info.controller.can_write(c) 
-        && !RelOpts.hide_create.exists(r.method))
+  [% IF (
+            foreign.can_write 
+        && !RelOpts.hide_create.exists(r.method)
+        )
         && !foreign.m2m # o2m only
      %]
   buttons.push({
@@ -71,8 +72,9 @@
             window.location = '[% r.create_new_url %]';
         }
   }, '-');
-    [%- END -%]
-    [% UNLESS RelOpts.lock.exists( r.method ) %]
+  [%- END -%]
+  [% IF foreign.can_write %]
+   [% UNLESS RelOpts.lock.exists( r.method ) %]
   buttons.push({
         text    : '[% foreign.m2m ? 'Add' : 'Reassign' %] [% r.thisLabel %]',
         tooltip :'Add a new row',
@@ -84,15 +86,17 @@
             });
         }
   }, '-');
-    [%- END -%]
-    [% IF !r.rel_info.map_class # TODO support excel export for m2m records %]
+   [%- END -%]
+  [%- END # can_write -%]
+  [% IF !r.rel_info.map_class # TODO support excel export for m2m records %]
   buttons.push({
          text : 'Export as Excel',
          handler: function(btn) {
             window.location = '[% r.export_as_xls_url %]';
          }
   }, '-');
-    [%- END -%]
+  [%- END -%]
+  [% IF EDITMODE != 0 -%]
     [% IF foreign.rm_button # m2m may be deleted %]
   buttons.push({
          text    : 'Remove selected rows',

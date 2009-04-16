@@ -10,7 +10,7 @@ use Class::Inspector;
 use CatalystX::CRUD::YUI;
 use CatalystX::CRUD::YUI::TT;
 
-our $VERSION = '0.016';
+our $VERSION = '0.017';
 
 =head1 NAME
 
@@ -34,7 +34,7 @@ The default config here is:
 
 # default config here instead of new() so subclasses can more easily override.
 __PACKAGE__->config( TEMPLATE_EXTENSION => '.tt' );
-$Template::Directive::WHILE_MAX = 64000;
+$Template::Directive::WHILE_MAX = 65000;
 
 =head1 METHODS
 
@@ -78,6 +78,15 @@ sub new {
 
     return $self;
 }
+
+=head2 get_template_filename
+
+Always returns C<crud/list.xls.tt> rather than depending on current
+Action path.
+
+=cut
+
+sub get_template_filename {'crud/list.xls.tt'}
 
 =head2 get_template_params
 

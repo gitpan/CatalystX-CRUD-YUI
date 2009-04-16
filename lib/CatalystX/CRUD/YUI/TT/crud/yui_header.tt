@@ -60,7 +60,7 @@
     END;
     
     ExtJS.css.push('resources/css/ext-all');
-    #ExtJS.css.push('resources/css/xtheme-gray');
+    ExtJS.css.push('resources/css/xtheme-gray');
   END;
   
   IF (!LiveGrid.defined);

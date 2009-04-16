@@ -114,7 +114,7 @@ FOREACH rel IN rel_order;
             
     USE create_new_url    = url(base_url _ "/create", map_params);  
     USE export_as_xls_url = url(base_url _ "/search", map_params);
-    export_as_xls_url     = export_as_xls_url _ '&amp;cxc-fmt=xls&amp;cxc-no_page=1';
+    export_as_xls_url     = export_as_xls_url _ '&cxc-fmt=xls&cxc-no_page=1';
     
     SET num_fields        = rel_controller.field_names(c).size;
     SET rowclick_action   = c.session.prefs.default_crud_action || 'view';

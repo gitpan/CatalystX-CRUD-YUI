@@ -11,17 +11,18 @@
                 field_names => field_names,
                 method_name => method_name,
                 );
+    DEFAULT serializer = yui.serializer();
 %]
 [% BLOCK make_row %]
   <row>
   [% FOR f = field_names;
-        SET hashref = yui.serialize(
-                    rdbo        => r, 
-                    field_names => field_names, 
-                    parent      => results, 
-                    c           => c,
+        SET hashref = serializer.serialize_object(
+                    object      => r, 
+                    col_names   => field_names, 
                     show_related_values => livegrid.show_related_values,
                     method_name => method_name,
+                    c           => c,
+                    parent      => (object || 0),
             );
         '<cell>'; hashref.item(f) | html; '</cell>';
                     

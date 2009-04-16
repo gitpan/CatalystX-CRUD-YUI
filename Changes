@@ -116,3 +116,17 @@ Revision history for CatalystX-CRUD-YUI
         * add id attributes to crud buttons
         * add support for arbitrary code to run on form submit with YAHOO.crud.onFormSubmit array
         * add YAHOO.crud.wysiwygify() to crud.js for optional Rich Text Editor on textarea fields.
+
+0.017   16 April 2009
+        * fix bug with missing 'Export as Excel' link when in View mode
+        * change to extjs grey style css
+        * add support for sort_prefix() in RHxFR::Metadata. This allows for setting explicit
+          sort prefix strings on column names and (in theory) allows for sorting on JOINed tables
+          as with m2m and o2m and FK "virtual" columns.
+        * fix bug when related FK is undef in Serializer
+        * enable Create and Reassign links without having to go to edit mode     
+        * fix Excel view and list.xls.tt to work (finally!) with LiveGrid+Serializer
+        * hide parent record action buttons when viewing related records in Edit mode (reduce
+          confusion particularly for Delete button)
+        * fix Export as Excel link to not escape & since it is in script tag
+

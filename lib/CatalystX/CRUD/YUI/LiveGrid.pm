@@ -10,7 +10,7 @@ use JSON::XS ();
 use Scalar::Util qw( blessed );
 use CatalystX::CRUD::YUI::Serializer;
 
-our $VERSION = '0.016';
+our $VERSION = '0.017';
 
 __PACKAGE__->mk_accessors(
     qw( yui results controller form
@@ -174,7 +174,6 @@ sub _init {
     $self->columns( [] );
     $self->show_related_values( {} );
     $self->col_filter( [] );
-    $self->sort_by( $form->metadata->default_sort_by || $self->pk->[0] );
 
     #carp "col_names for $results: " . dump $self->col_names;
 
@@ -191,6 +190,8 @@ sub _init {
                 $results->query->{plain_query} || {}
             )
         );
+
+        $self->sort_by( $form->metadata->default_sort_by || $self->pk->[0] );
     }
     else {
 
@@ -208,6 +209,9 @@ sub _init {
                 )
             )
         );
+
+        $self->sort_by( $form->metadata->default_related_sort_by
+                || $self->pk->[0] );
     }
 
     $self->{url} .= '?' unless $self->{url} =~ m/\?/;
@@ -244,6 +248,9 @@ sub _init {
             sortable => ( $isa_field || $isa_chain )
             ? JSON::XS::true()
             : JSON::XS::false(),
+
+            sort_prefix =>
+                ( $form->metadata->sort_prefix->{$field_name} || '' ),
 
             type => $isa_field
             ? $self->_get_col_type( $isa_field->class )
@@ -328,7 +335,7 @@ sub _init {
 
     my $moniker;
     my $object_class = $form->metadata->object_class;
-    if ($object_class->can('moniker')) {
+    if ( $object_class->can('moniker') ) {
         $moniker = $object_class->moniker;
     }
     else {
@@ -449,11 +456,12 @@ sub column_defs {
     my @defs;
     for my $col ( @{ $self->columns } ) {
         my $def = {
-            header    => $col->{label},
-            align     => 'left',
-            sortable  => $col->{sortable},
-            dataIndex => $col->{key},
-            type      => $col->{type},
+            header     => $col->{label},
+            align      => 'left',
+            sortable   => $col->{sortable},
+            sortPrefix => $col->{sort_prefix},
+            dataIndex  => $col->{key},
+            type       => $col->{type},
         };
         if ( $def->{type} eq 'pk' && $self->{hide_pk_columns} ) {
             $def->{hidden} = JSON::XS::true();
