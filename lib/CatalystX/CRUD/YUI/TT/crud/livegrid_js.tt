@@ -48,8 +48,8 @@
             window.location.href = '[% c.uri_for("/" _ livegrid.controller.action_namespace) %]/' + 
                                 r.id + '/' + '[% (c.session.prefs.default_crud_action || 'view') %]';
         },
-        filters     : [% livegrid.col_filter.as_json %],
-        text_columns: [% livegrid.text_columns.as_json %]
+        filters     : [% livegrid.col_filter.as_json || '[]' %],
+        text_columns: [% livegrid.text_columns.as_json || '[]' %]
     };
     YAHOO.util.Event.onDOMReady(function() {
         YAHOO.crud.new_livegrid([% livegrid.counter || 0 %]); 

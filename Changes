@@ -130,3 +130,12 @@ Revision history for CatalystX-CRUD-YUI
           confusion particularly for Delete button)
         * fix Export as Excel link to not escape & since it is in script tag
 
+0.018   1 May 2009
+        * move logic for can_write() check into edit.tt so that related values can be edited.
+          This logic change is first supported in CatalystX::CRUD 0.40.
+        * fix authz check for m2m relationships to look at the m2m controller (map_class_controller)
+          rather than the foreign class controller.
+        * reduce clicks when viewing related records in edit mode by making the row click take you
+          to the edit url rather than the view url.
+        * bump RHxFR dep version in Makefile.PL (https://rt.cpan.org/Ticket/Display.html?id=45631)
+

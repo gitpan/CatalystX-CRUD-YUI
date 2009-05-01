@@ -1,4 +1,4 @@
-use Test::More tests => 13;
+use Test::More tests => 14;
 
 BEGIN {
     $ENV{CATALYST_DEBUG} ||= 0;
@@ -9,22 +9,23 @@ SKIP: {
 
     eval "use Rose::DB::Object";
     if ($@) {
-        skip "install Rose::DB::Object to test MyRDBO app", 13;
+        skip "install Rose::DB::Object to test MyRDBO app", 14;
     }
     eval "use Rose::DBx::Object::MoreHelpers";
     if ($@) {
-        skip "Rose::DBx::Object::MoreHelpers required to test MyRDBO app", 13;
+        skip "Rose::DBx::Object::MoreHelpers required to test MyRDBO app", 14;
     }
     eval "use CatalystX::CRUD::Model::RDBO";
     if ( $@ or $CatalystX::CRUD::Model::RDBO::VERSION < 0.14 ) {
+        warn $@ if $@;
         skip "CatalystX::CRUD::Model::RDBO 0.14 required to test MyRDBO app",
-            13;
+            14;
     }
 
     #check for sqlite3 cmd line tool
     my @sqlite_version = `sqlite3 -version`;
     if ( !@sqlite_version ) {
-        skip "sqlite3 cmd line tool not found", 13;
+        skip "sqlite3 cmd line tool not found", 15;
     }
 
     use lib 't/MyRDBO/lib';
@@ -38,8 +39,6 @@ SKIP: {
     use JSON::XS;
 
     #dump MyRDBO::Controller::CRUD::Test::Foo->config;
-
-    ok( get('/crud/test/foo'), "get /crud/test/foo" );
 
     ok( my $res = request('/crud/test/foo'), "response for /crud/test/foo" );
 
@@ -98,5 +97,15 @@ SKIP: {
     is( $create_form_test->headers->{status}, 200, "create action works" );
 
     #dump $create_form_test;
+
+    # test 0.018 feature allowing edit of relationships when
+    # parent object is can_write == 0
+    ok( my $edit_no_write = request('/crud/test/foonowrite/1/edit'),
+        "foonowrite test GET" );
+
+    unlike( $edit_no_write->content, qr/<input[^>]+type="text"/,
+        "no text input fields" );
+
+    #dump $edit_no_write;
 
 }

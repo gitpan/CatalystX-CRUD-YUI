@@ -1,4 +1,5 @@
 <div id="crud-buttons">
+[% IF c.controller.can_write(c) # see note in edit.tt per CX::CRUD 0.40 %]
  <div class="buttons" style="float:left">
  <input id='cxc-save-button' class="button" type="submit" name="save" value="Save" />
  </div>
@@ -11,4 +12,5 @@
            return true; } else { return false; }" />
  [% END %]
  </div>
-</div>
+[% END # can_write %]
+</div><!-- end #crud-buttons -->

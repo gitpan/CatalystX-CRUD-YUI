@@ -96,9 +96,11 @@ FOREACH rel IN rel_order;
     SET map_to         = '';
     SET m2m_url        = '';
     SET m2m_map_to_url = '';
+    SET authz_controller = rel_controller;
     IF (rel_info.type == 'many to many');
-        m2m_url = c.uri_for('/' _ rel_controller.path_prefix, 'livegrid_create_form');
-        m2m_map_to_url = c.uri_for('/' _ c.controller(rel_info.map_class_controller_class).path_prefix);
+        m2m_url         = c.uri_for('/' _ rel_controller.path_prefix, 'livegrid_create_form');
+        m2m_map_to_url  = c.uri_for('/' _ c.controller(rel_info.map_class_controller_class).path_prefix);
+        authz_controller = c.controller(rel_info.map_class_controller_class);
     ELSE;
         FOREACH local_col IN rel_info.cmap.keys.sort;
             SET fk          = rel_info.cmap.$local_col;
@@ -118,11 +120,15 @@ FOREACH rel IN rel_order;
     
     SET num_fields        = rel_controller.field_names(c).size;
     SET rowclick_action   = c.session.prefs.default_crud_action || 'view';
-    IF (LIVEGRID_FORM_SIZE < num_fields && EDITMODE && !map_form_url);
+    IF (EDITMODE);
+        rowclick_action   = 'edit';
+    END;
+    IF (LIVEGRID_FORM_SIZE > num_fields && EDITMODE && !map_form_url);   # experimental
         rowclick_action = 'livegrid_edit_form';
     END;
     
     RelsToShow.push({
+        'authz_controller'  => authz_controller,
         'method'            => method,
         'livegrid'          => livegrid,
         'rel_info'          => rel_info,

@@ -11,7 +11,7 @@ use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui html_escape ));
 
-our $VERSION = '0.017';
+our $VERSION = '0.018';
 
 # html escaping
 my %Ents = (

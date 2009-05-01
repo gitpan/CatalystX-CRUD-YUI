@@ -12,8 +12,8 @@
                             || (rel_info.controller.can_write(c) 
                                     ? 'edit' : 'view')),
         'name'          => r.method,
-        'can_read'      => r.rel_info.controller.can_read(c),
-        'can_write'     => r.rel_info.controller.can_write(c),
+        'can_read'      => r.authz_controller.can_read(c),
+        'can_write'     => r.authz_controller.can_write(c),
         'rm_button'     => 0,
         'm2m'           => 0
     };

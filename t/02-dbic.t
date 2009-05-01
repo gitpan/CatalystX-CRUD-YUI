@@ -1,4 +1,4 @@
-use Test::More tests => 9;
+use Test::More tests => 8;
 
 BEGIN {
     $ENV{CATALYST_DEBUG} ||= 0;
@@ -9,17 +9,18 @@ SKIP: {
 
     eval "use DBIx::Class";
     if ($@) {
-        skip "install DBIx::Class to test MyDBIC app", 9;
+        skip "install DBIx::Class to test MyDBIC app", 8;
     }
     eval "use DBIx::Class::RDBOHelpers";
     if ($@) {
-        skip "install DBIx::Class::RDBOHelpers to test MyDBIC app", 9;
+        warn $@;
+        skip "install DBIx::Class::RDBOHelpers to test MyDBIC app", 8;
     }
 
     #check for sqlite3 cmd line tool
     my @sqlite_version = `sqlite3 -version`;
     if ( !@sqlite_version ) {
-        skip "sqlite3 cmd line tool not found", 9;
+        skip "sqlite3 cmd line tool not found", 8;
     }
 
     use lib 't/MyDBIC/lib';
@@ -31,8 +32,6 @@ SKIP: {
     use HTTP::Request::Common;
     use Data::Dump qw( dump );
     use JSON::XS;
-
-    ok( get('/crud/test/foo'), "get /crud/test/foo" );
 
     ok( my $res = request('/crud/test/foo'), "response for /crud/test/foo" );
 

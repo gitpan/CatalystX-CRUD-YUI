@@ -7,6 +7,6 @@
     LGBaseURL       = 'http://static.msi.umn.edu/livegrid';
     LGVersion       = 'trunk';
     ThisIsDefTTConfig = 1;
-    LIVEGRID_FORM_SIZE = 7;
+    LIVEGRID_FORM_SIZE = 7;   # max number of related form fields to trigger livegrid_related_form URL
 %]
 
