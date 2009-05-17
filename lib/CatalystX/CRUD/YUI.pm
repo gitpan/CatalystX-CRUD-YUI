@@ -6,13 +6,14 @@ use Carp;
 use CatalystX::CRUD::YUI::LiveGrid;
 use CatalystX::CRUD::YUI::Serializer;
 use base qw( Class::Accessor::Fast );
-use Class::C3;
+use MRO::Compat;
+use mro "c3";
 use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(
     qw( serializer_class livegrid_class ));
 
-our $VERSION = '0.018';
+our $VERSION = '0.019';
 
 =head1 NAME
 

@@ -4,16 +4,17 @@ use warnings;
 use strict;
 use Carp;
 use Data::Dump qw( dump );
-use Class::C3;
+use MRO::Compat;
+use mro "c3";
 use base qw( Class::Accessor::Fast );
 use JSON::XS ();
 use Scalar::Util qw( blessed );
 use CatalystX::CRUD::YUI::Serializer;
 
-our $VERSION = '0.018';
+our $VERSION = '0.019';
 
 __PACKAGE__->mk_accessors(
-    qw( yui results controller form
+    qw( yui results controller form c
         method_name pk columns show_related_values
         col_filter text_columns col_names url count counter
         sort_by show_remove_button
@@ -34,6 +35,7 @@ CatalystX::CRUD::YUI::LiveGrid - ExtJS LiveGrid objects
             form        => $form,
             method_name => $rel_info->{method},
             col_names   => $form->metadata->field_methods,
+            c           => $c,          # Catalyst context object
  );
   
  $livegrid->serialize;  # returns serialized results
@@ -149,13 +151,7 @@ sub _init {
     my $controller = $self->{controller}
         or croak "controller required";
     my $form = $self->{form} or croak "form required";
-
-    my $app = $form->app || $form->app_class;
-    if ( !$app ) {
-
-        #carp dump $form;
-        croak "cannot get app from form->app or form->app_class";
-    }
+    my $app  = ($self->{c} || $form->app) or croak "\$c object required";
 
     $self->{hide_pk_columns} = $controller->hide_pk_columns;
 

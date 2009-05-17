@@ -4,14 +4,15 @@ use warnings;
 use strict;
 use Carp;
 use base 'Class::Accessor::Fast';
-use Class::C3;
+use MRO::Compat;
+use mro "c3";
 use Scalar::Util qw( blessed );
 use JSON::XS ();
 use Data::Dump qw( dump );
 
 __PACKAGE__->mk_accessors(qw( datetime_format yui html_escape ));
 
-our $VERSION = '0.018';
+our $VERSION = '0.019';
 
 # html escaping
 my %Ents = (
@@ -315,7 +316,7 @@ sub serialize_livegrid {
     my $results  = $livegrid->results
         or croak "no results in LiveGrid object";
     my $method_name = $livegrid->method_name || '';
-    my $params = $livegrid->form->app->req->params;
+    my $params = $livegrid->c->req->params;
     my $max_loops;
     if ( $results->query->{limit} ) {
         $max_loops = 0;    # db handled the limit
@@ -351,8 +352,8 @@ sub serialize_livegrid {
                 {   object      => $object,
                     method_name => $method_name,
                     col_names   => $livegrid->col_names,
-                    parent      => $livegrid->form->app->stash->{object},
-                    c           => $livegrid->form->app,
+                    parent      => $livegrid->c->stash->{object},
+                    c           => $livegrid->c,
                     show_related_values => $livegrid->show_related_values,
                     takes_object_as_argument =>
                         $livegrid->form->metadata->takes_object_as_argument,

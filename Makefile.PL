@@ -16,18 +16,21 @@ requires 'Catalyst::Plugin::Static::Simple'      => 0;
 requires 'Catalyst::Plugin::ConfigLoader'        => 0;
 requires 'Config::General'                       => 0;
 requires 'Catalyst::Action::RenderView'          => 0;
-requires 'CatalystX::CRUD'                       => 0.40;
-recommends 'CatalystX::CRUD::Model::RDBO'        => 0.16;
-recommends 'CatalystX::CRUD::ModelAdapter::DBIC' => 0.07;
+requires 'CatalystX::CRUD'                       => 0.43;
+recommends 'CatalystX::CRUD::Model::RDBO'        => 0.20;
+recommends 'CatalystX::CRUD::ModelAdapter::DBIC' => 0.08;
 recommends 'Rose::DBx::Object::MoreHelpers'      => 0.06;
 recommends 'DBIx::Class::RDBOHelpers'            => 0.08;
 requires 'Rose::HTMLx::Form::Related'            => 0.17;
-requires 'CatalystX::CRUD::Controller::RHTMLO'   => 0.18; 
+requires 'CatalystX::CRUD::Controller::RHTMLO'   => 0.19;
 requires 'CatalystX::CRUD::View::Excel'          => 0.06;
 requires 'Scalar::Util'                          => 0;
-requires 'Class::C3'                             => 0;
+requires 'MRO::Compat'                           => 0;
 requires 'JSON::XS'                              => 2.23;
 requires 'Template::Plugin::Handy'               => 0.002;
+requires 'Class::Inspector'                      => 0;
+
+license  'perl';
 
 WriteAll;
 

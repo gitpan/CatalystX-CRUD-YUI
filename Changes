@@ -139,3 +139,9 @@ Revision history for CatalystX-CRUD-YUI
           to the edit url rather than the view url.
         * bump RHxFR dep version in Makefile.PL (https://rt.cpan.org/Ticket/Display.html?id=45631)
 
+0.019   17 May 2009
+        * fix number of skipped tests in 01-rdbo.t
+        * switch from Class::C3 to MRO::Compat and update deps in Makefile.PL
+        * change Livegrid->new to accept 'c' arg instead of getting it from form->app.
+          This fixes bug affecting tests under perl 5.10.
+

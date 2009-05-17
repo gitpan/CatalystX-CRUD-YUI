@@ -6,7 +6,7 @@
         THROW crud '"results" must be defined in ' _ component.name;
     END;
     
-    DEFAULT controller = c.controller();
+    DEFAULT controller  = c.controller();
     DEFAULT method_name = 0;
     DEFAULT field_names = form.metadata.field_methods;
     SET no_wrapper = 1;    
@@ -16,7 +16,8 @@
          'form'         => form,
          'col_names'    => field_names,
          'method_name'  => method_name,
-         'show_remove_button' => c.req.params.item('cxc-add_rm_button')
+         'show_remove_button' => c.req.params.item('cxc-add_rm_button'),
+         'c'            => c,
     ); 
     SET res     = { items       => livegrid.serialize };
     SET json    = { response    => { value => res } };

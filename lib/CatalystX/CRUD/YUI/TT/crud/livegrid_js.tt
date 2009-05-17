@@ -4,6 +4,7 @@
          'results'      => results, 
          'controller'   => c.controller(), 
          'form'         => form,
+         'c'            => c,
     ); 
    END;
    CALL livegrid.excel_url(c.req.uri_with({'cxc-fmt'='xls','cxc-no_page'=1}));

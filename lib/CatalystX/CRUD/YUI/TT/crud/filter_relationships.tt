@@ -89,6 +89,7 @@ FOREACH rel IN rel_order;
             'form'          => rel_controller.form(c),
             'method_name'   => method,
             'field_names'   => rel_controller.form(c).metadata.field_methods,
+            'c'             => c,
     });
         
     SET base_url       = c.uri_for('/' _ rel_controller.path_prefix);

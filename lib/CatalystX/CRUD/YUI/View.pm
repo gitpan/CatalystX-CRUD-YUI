@@ -5,13 +5,14 @@ use strict;
 use Carp;
 use base qw( Catalyst::View::TT );
 use Data::Dump qw( dump );
-use Class::C3;
+use MRO::Compat;
+use mro "c3";
 use Path::Class;
 use Class::Inspector;
 use CatalystX::CRUD::YUI;
 use CatalystX::CRUD::YUI::TT;
 
-our $VERSION = '0.018';
+our $VERSION = '0.019';
 
 =head1 NAME
 

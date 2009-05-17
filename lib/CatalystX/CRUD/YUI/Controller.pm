@@ -4,7 +4,8 @@ use warnings;
 use strict;
 use base qw( CatalystX::CRUD::Controller );
 use Carp;
-use Class::C3;
+use MRO::Compat;
+use mro "c3";
 
 use Data::Dump qw( dump );
 
@@ -28,7 +29,7 @@ __PACKAGE__->config(
     },
 );
 
-our $VERSION = '0.018';
+our $VERSION = '0.019';
 
 =head1 NAME
 
