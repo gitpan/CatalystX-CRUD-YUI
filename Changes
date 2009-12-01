@@ -145,3 +145,8 @@ Revision history for CatalystX-CRUD-YUI
         * change Livegrid->new to accept 'c' arg instead of getting it from form->app.
           This fixes bug affecting tests under perl 5.10.
 
+0.020   1 Dec 2009
+        * add missing dep on Template::Plugin::Autoformat to Makefile
+        * fix dbic test to make sort order explicit with table prefix
+        * allow for cxc-* params to be set in livegrid.js and default there.
+

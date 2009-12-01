@@ -29,7 +29,7 @@ __PACKAGE__->config(
     },
 );
 
-our $VERSION = '0.019';
+our $VERSION = '0.020';
 
 =head1 NAME
 
@@ -229,10 +229,13 @@ sub livegrid_related : PathPart Chained('fetch') Args(1) {
     # param name compat with cxc api
     # TODO configurable names in livegrid js?
     my $params = $c->req->params;
-    $params->{'cxc-dir'}       = $params->{dir};
-    $params->{'cxc-sort'}      = $params->{sort};
-    $params->{'cxc-page_size'} = $params->{limit};
-    $params->{'cxc-offset'}    = $params->{start};
+
+    #$c->log->debug(Data::Dump::dump $params) if $c->debug;
+
+    $params->{'cxc-dir'}       ||= $params->{dir};
+    $params->{'cxc-sort'}      ||= $params->{sort};
+    $params->{'cxc-page_size'} ||= $params->{limit};
+    $params->{'cxc-offset'}    ||= $params->{start};
 
     $c->stash( view_on_single_result => 0 );
     $self->do_related_search( $c, $rel_name );

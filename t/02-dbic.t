@@ -49,7 +49,7 @@ SKIP: {
         "view foo 1 contains correct ctime"
     );
 
-    ok( $res = request('/crud/test/foo/1/livegrid_related/foogoos'),
+    ok( $res = request('/crud/test/foo/1/livegrid_related/foogoos?cxc-order=goo.id%20asc'),
         "related table" );
 
     #dump $res;

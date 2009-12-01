@@ -41,7 +41,7 @@ USE autoformat( all = 1 );  # for textarea readonly
 [% BLOCK datetime_popup %]
 [% SET id = field.id %]
 <span class="calendar_container" id="[% id %]_calendar_container"><img class='calendar'
-     src='[% YUIBaseURL %]/[% YUIVersion %]/examples/button/assets/calendar_icon.gif'
+     src='[% CalendarIconUrl %]'
      onclick='YAHOO.crud.datetime_picker("[% id %]")'
      alt="calendar icon" />
 </span>
