@@ -150,3 +150,8 @@ Revision history for CatalystX-CRUD-YUI
         * fix dbic test to make sort order explicit with table prefix
         * allow for cxc-* params to be set in livegrid.js and default there.
 
+0.021   03 Feb 2010
+        * add missing META.yml
+        * change base URLs for ExtJS and Livegrid to point at non-MSI URLs and remove
+          warning about "get your own"
+

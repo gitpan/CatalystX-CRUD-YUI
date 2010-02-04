@@ -31,7 +31,10 @@ requires 'Template::Plugin::Handy'               => 0.002;
 requires 'Template::Plugin::Autoformat'          => 0;
 requires 'Class::Inspector'                      => 0;
 
-license  'perl';
+license 'perl';
+homepage 'https://trac.msi.umn.edu/trac/sw/';
+bugtracker 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=CatalystX-CRUD-YUI';
+repository 'https://svn.msi.umn.edu/sw/perl/CatalystX-CRUD-YUI/';
 
 WriteAll;
 

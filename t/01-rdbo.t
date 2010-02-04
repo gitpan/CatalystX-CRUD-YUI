@@ -103,8 +103,8 @@ SKIP: {
     ok( my $edit_no_write = request('/crud/test/foonowrite/1/edit'),
         "foonowrite test GET" );
 
-    unlike( $edit_no_write->content, qr/<input[^>]+type="text"/,
-        "no text input fields" );
+    unlike( $edit_no_write->content, qr/<input id='cxc-save-button'/,
+        "no action buttons in UI" );
 
     #dump $edit_no_write;
 

@@ -2,9 +2,9 @@
     DateTimeFormat  = '%Y-%m-%d %H:%M:%S';
     YUIBaseURL      = 'http://yui.yahooapis.com';
     YUIVersion      = '2.6.0';
-    ExtBaseURL      = 'http://static.msi.umn.edu/extjs';
-    ExtVersion      = '2.2';
-    LGBaseURL       = 'http://static.msi.umn.edu/livegrid';
+    ExtBaseURL      = 'http://extjs.cachefly.net';
+    ExtVersion      = 'ext-2.2';
+    LGBaseURL       = 'http://ext-ux-livegrid.googlecode.com/svn';
     LGVersion       = 'trunk';
     CalendarIconUrl = 'https://developer.yahoo.com/yui/examples/button/assets/calendar_icon.gif';
     ThisIsDefTTConfig = 1;
