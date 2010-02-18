@@ -42,9 +42,10 @@ requires:
   Template::Plugin::Handy: 0.002
   Test::More: 0
   Text::Autoformat: 0
+  perl: 5.8.3
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=CatalystX-CRUD-YUI
   homepage: https://trac.msi.umn.edu/trac/sw/
   license: http://dev.perl.org/licenses/
   repository: https://svn.msi.umn.edu/sw/perl/CatalystX-CRUD-YUI/
-version: 0.021
+version: 0.022

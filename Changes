@@ -155,3 +155,7 @@ Revision history for CatalystX-CRUD-YUI
         * change base URLs for ExtJS and Livegrid to point at non-MSI URLs and remove
           warning about "get your own"
 
+0.022   17 Feb 2010
+        * no changes but version bump to accomodate CPAN. Apparently I was too aggressive in 
+          cleaning up old files and deleted 0.021...
+

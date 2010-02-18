@@ -5,6 +5,8 @@ use inc::Module::Install;
 
 # Define metadata
 name 'CatalystX-CRUD-YUI';
+perl_version '5.008003';
+
 all_from 'lib/CatalystX/CRUD/YUI.pm';
 
 requires 'Test::More'                            => 0;
