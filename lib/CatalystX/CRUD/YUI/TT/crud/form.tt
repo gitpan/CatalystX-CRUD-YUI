@@ -88,6 +88,11 @@ USE autoformat( all = 1 );  # for textarea readonly
         END;
  %]
  <tr class="[% (loop.count % 2) ? 'alternate' : '' %]">
+ [% IF (field.description) %]
+ <tr><th colspan="2"><div class="description">
+ The <strong>[% field.name %]</strong> field specifies [% field.description %].
+ </div></th></tr>
+ [% END %]
  [%
 
         # read-only fields

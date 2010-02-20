@@ -159,3 +159,7 @@ Revision history for CatalystX-CRUD-YUI
         * no changes but version bump to accomodate CPAN. Apparently I was too aggressive in 
           cleaning up old files and deleted 0.021...
 
+0.023   20 Feb 2010
+        * support for Field->description. Patch from Adam Mackler.
+
+        
