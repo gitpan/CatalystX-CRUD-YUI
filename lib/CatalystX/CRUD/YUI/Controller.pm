@@ -29,7 +29,7 @@ __PACKAGE__->config(
     },
 );
 
-our $VERSION = '0.023';
+our $VERSION = '0.024';
 
 =head1 NAME
 

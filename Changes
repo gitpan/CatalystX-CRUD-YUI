@@ -162,4 +162,6 @@ Revision history for CatalystX-CRUD-YUI
 0.023   20 Feb 2010
         * support for Field->description. Patch from Adam Mackler.
 
-        
+0.024   18 Mar 2010
+        * check for field.description.length, since localization object will return true.
+

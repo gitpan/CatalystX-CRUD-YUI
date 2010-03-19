@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use Template::Plugin::Handy 'install';
 
-our $VERSION = '0.023';
+our $VERSION = '0.024';
 
 =head1 NAME
 
