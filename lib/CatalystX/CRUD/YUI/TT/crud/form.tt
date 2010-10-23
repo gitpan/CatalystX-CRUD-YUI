@@ -88,7 +88,7 @@ USE autoformat( all = 1 );  # for textarea readonly
         END;
  %]
  <tr class="[% (loop.count % 2) ? 'alternate' : '' %]">
- [% IF (field.description.length) %]
+ [% IF (field.description.defined && field.description.text.length) %]
  <tr><th colspan="2"><div class="description">
  The <strong>[% field.name %]</strong> field specifies [% field.description %].
  </div></th></tr>
@@ -102,7 +102,7 @@ USE autoformat( all = 1 );  # for textarea readonly
             
             tdopen;
 
-            "<span class='input'>";
+            "<div class='input'>";
             IF field.isa('Rose::HTML::Form::Field::TextArea');
                 # if there is raw html in the field, assume it
                 # handles it's own line breaks, etc.
@@ -127,7 +127,7 @@ USE autoformat( all = 1 );  # for textarea readonly
             
             PROCESS crud/related_field_link.tt;
             
-            "</span>";
+            "</div>";
             
             # optionally pass the readonly value through hidden
             # as when creating an object with a FK that is readonly.

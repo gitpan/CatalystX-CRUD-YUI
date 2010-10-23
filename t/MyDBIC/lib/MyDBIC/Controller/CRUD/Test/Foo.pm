@@ -2,7 +2,8 @@ package MyDBIC::Controller::CRUD::Test::Foo;
 use strict;
 use base qw( MyDBIC::Base::Controller::RHTMLO );
 use MyDBIC::Form::Foo;
-use Class::C3;
+use MRO::Compat;
+use mro 'c3';
 
 __PACKAGE__->config(
     form_class       => 'MyDBIC::Form::Foo',

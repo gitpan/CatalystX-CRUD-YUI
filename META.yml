@@ -48,4 +48,4 @@ resources:
   homepage: https://trac.msi.umn.edu/trac/sw/
   license: http://dev.perl.org/licenses/
   repository: https://svn.msi.umn.edu/sw/perl/CatalystX-CRUD-YUI/
-version: 0.024
+version: 0.025

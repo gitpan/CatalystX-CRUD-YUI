@@ -9,7 +9,8 @@ use base qw(
 );
 
 # **IMPORTANT** since we have a classic diamond MRO
-use Class::C3;
+use MRO::Compat;
+use mro 'c3';
 
 1;
 

@@ -25,7 +25,7 @@ __PACKAGE__->add_columns(
     my_int => {
         data_type         => 'int',
         is_auto_increment => 0,
-        is_nullable       => 1,
+        is_nullable       => 0,
     },
     my_dec => {
         data_type         => 'float',

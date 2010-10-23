@@ -38,6 +38,7 @@ CALL yui.show_remove_button(EDITMODE);
 SET Tabs = [];
 SET activeTab = 0;
 SET RelsToShow = [];
+SET RelsCreateLinks = [];
 DEFAULT RelOpts = {};
 SET rel_order = [];
 IF RelOpts.order;
@@ -46,7 +47,6 @@ ELSE;
     rel_order = form.metadata.relationships.sort_by('label');
 END;
 FOREACH rel IN rel_order;
-
     NEXT IF rel.type && rel.type == 'foreign key';
     NEXT IF rel.type && rel.type == 'many to one';
     NEXT IF rel.type && rel.type == 'one to one';

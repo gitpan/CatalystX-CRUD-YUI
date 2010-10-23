@@ -87,9 +87,11 @@ t/MyDBIC/lib/MyDBIC/Controller/CRUD.pm
 t/MyDBIC/lib/MyDBIC/Controller/CRUD/Test/Bar.pm
 t/MyDBIC/lib/MyDBIC/Controller/CRUD/Test/Foo.pm
 t/MyDBIC/lib/MyDBIC/Controller/CRUD/Test/Goo.pm
+t/MyDBIC/lib/MyDBIC/Controller/CRUD/Test/FooGoo.pm
 t/MyDBIC/lib/MyDBIC/Controller/Root.pm
 t/MyDBIC/lib/MyDBIC/Form/Bar.pm
 t/MyDBIC/lib/MyDBIC/Form/Foo.pm
+t/MyDBIC/lib/MyDBIC/Form/FooGoo.pm
 t/MyDBIC/lib/MyDBIC/Form/Goo.pm
 t/MyDBIC/lib/MyDBIC/Model/DB.pm
 t/MyDBIC/lib/MyDBIC/ModelAdapter.pm

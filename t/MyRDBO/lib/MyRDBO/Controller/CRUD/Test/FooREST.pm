@@ -4,7 +4,9 @@ use base qw(
     CatalystX::CRUD::REST
     MyRDBO::Base::Controller::RHTMLO
 );
-use Class::C3;
+use MRO::Compat;
+use mro 'c3';
+
 use YUI::Test::Foo::Form;
 
 __PACKAGE__->config(

@@ -18,7 +18,14 @@
    href="#[% r.tabLabel %]Tab" onclick="return false">[% r.thisLabel %]</a></li>
  [% END %]
  [% END # RelsToShow.size %]
- </ul>
+ [% IF RelsCreateLinks.size %]
+  <li class="item first">Create a new [% ThisObjectName %]</li>
+  [% SET urlbase = c.uri_for('/' _ c.controller.path_prefix _ '/create');
+     FOREACH r IN RelsCreateLinks;
+       USE create_url = url(urlbase, r.params );  %]
+       <li><a href="[% create_url %]">for [% r.text %]</a></li>
+  [% END %]
+ [% END # RelsCreateLinks.size %] </ul>
 [% END # if any links %]
 </div>
 

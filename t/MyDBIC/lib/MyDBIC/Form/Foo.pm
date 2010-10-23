@@ -56,6 +56,7 @@ sub build_form {
             rank      => 4,
             size      => 24,
             maxlength => 64,
+            required  => 1,
         },
 
         my_dec => {
@@ -76,6 +77,7 @@ sub build_form {
             tabindex => 6,
             rank     => 6,
             class    => 'boolean',
+            required => 1,
         },
 
         ctime => {

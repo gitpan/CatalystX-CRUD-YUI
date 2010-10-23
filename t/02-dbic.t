@@ -16,6 +16,13 @@ SKIP: {
         warn $@;
         skip "install DBIx::Class::RDBOHelpers to test MyDBIC app", 8;
     }
+    eval "use CatalystX::CRUD::ModelAdapter::DBIC";
+    if ( $@ or $CatalystX::CRUD::ModelAdapter::DBIC::VERSION < 0.08 ) {
+        warn $@ if $@;
+        skip
+            "CatalystX::CRUD::ModelAdapter::DBIC 0.08 required to test MyRDBO app",
+            8;
+    }
 
     #check for sqlite3 cmd line tool
     my @sqlite_version = `sqlite3 -version`;
@@ -49,8 +56,11 @@ SKIP: {
         "view foo 1 contains correct ctime"
     );
 
-    ok( $res = request('/crud/test/foo/1/livegrid_related/foogoos?cxc-order=goo.id%20asc'),
-        "related table" );
+    ok( $res = request(
+            '/crud/test/foo/1/livegrid_related/foogoos?cxc-order=goo.id%20asc'
+        ),
+        "related table"
+    );
 
     #dump $res;
 

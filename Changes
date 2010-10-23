@@ -165,3 +165,10 @@ Revision history for CatalystX-CRUD-YUI
 0.024   18 Mar 2010
         * check for field.description.length, since localization object will return true.
 
+0.025   23 Oct 2010
+        * change field.description.length to .defined to appease TT.
+        * add Create Related links. Patch from Adam Mackler.
+        * fix some XHTML compliance bugs (reported by Adam Mackler).
+        * change 'use Class::C3' to 'use MRO::Compat' in test libs.
+        * add m2m example to MyDBIC test app
+
