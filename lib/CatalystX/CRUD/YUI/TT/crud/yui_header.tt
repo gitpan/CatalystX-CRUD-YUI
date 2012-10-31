@@ -71,13 +71,8 @@
         js      => [],
     };
     
-    LiveGrid.css.push('src/resources/css/ext-ux-livegrid');
-    LiveGrid.js.push('src/GridPanel');
-    LiveGrid.js.push('src/GridView');
-    LiveGrid.js.push('src/RowSelectionModel');
-    LiveGrid.js.push('src/Store');
-    LiveGrid.js.push('src/Toolbar');
-    LiveGrid.js.push('src/JsonReader');
+    LiveGrid.css.push('resources/css/ext-ux-livegrid');
+    LiveGrid.js.push('livegrid-all');
   END;
     
 -%]

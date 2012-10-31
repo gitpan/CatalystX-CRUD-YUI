@@ -3,11 +3,12 @@ abstract: 'YUI for your CatalystX::CRUD view'
 author:
   - 'Peter Karman, C<< <karman@cpan.org> >>'
 build_requires:
-  ExtUtils::MakeMaker: 6.42
+  ExtUtils::MakeMaker: 6.59
 configure_requires:
-  ExtUtils::MakeMaker: 6.42
+  ExtUtils::MakeMaker: 6.59
 distribution_type: module
-generated_by: 'Module::Install version 0.92'
+dynamic_config: 1
+generated_by: 'Module::Install version 1.06'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -18,7 +19,7 @@ no_index:
     - inc
     - t
 recommends:
-  CatalystX::CRUD::Model::RDBO: 0.2
+  CatalystX::CRUD::Model::RDBO: 0.23
   CatalystX::CRUD::ModelAdapter::DBIC: 0.08
   DBIx::Class::RDBOHelpers: 0.08
   Rose::DBx::Object::MoreHelpers: 0.06
@@ -27,7 +28,7 @@ requires:
   Catalyst::Plugin::ConfigLoader: 0
   Catalyst::Plugin::Static::Simple: 0
   Catalyst::View::TT: 0
-  CatalystX::CRUD: 0.43
+  CatalystX::CRUD: 0.53
   CatalystX::CRUD::Controller::RHTMLO: 0.19
   CatalystX::CRUD::View::Excel: 0.06
   Class::Inspector: 0
@@ -45,7 +46,7 @@ requires:
   perl: 5.8.3
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=CatalystX-CRUD-YUI
-  homepage: https://trac.msi.umn.edu/trac/sw/
+  homepage: https://github.com/karpet/catalystx-crud-yui
   license: http://dev.perl.org/licenses/
-  repository: https://svn.msi.umn.edu/sw/perl/CatalystX-CRUD-YUI/
-version: 0.025
+  repository: https://github.com/karpet/catalystx-crud-yui
+version: 0.026
