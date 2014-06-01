@@ -8,7 +8,7 @@ configure_requires:
   ExtUtils::MakeMaker: 6.59
 distribution_type: module
 dynamic_config: 1
-generated_by: 'Module::Install version 1.06'
+generated_by: 'Module::Install version 1.08'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -38,8 +38,9 @@ requires:
   Path::Class: 0
   Rose::HTMLx::Form::Related: 0.17
   Scalar::Util: 0
+  Search::Tools: '1.000'
   Template: 0
-  Template::Plugin::Autoformat: 0
+  Template::Plugin::Autoformat: '2.75'
   Template::Plugin::Handy: 0.002
   Test::More: 0
   Text::Autoformat: 0
@@ -49,4 +50,4 @@ resources:
   homepage: https://github.com/karpet/catalystx-crud-yui
   license: http://dev.perl.org/licenses/
   repository: https://github.com/karpet/catalystx-crud-yui
-version: 0.030
+version: 0.030_01
